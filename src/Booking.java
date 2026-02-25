@@ -48,6 +48,14 @@ public class Booking {
         this.status = Status.CANCELLED;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
     public Long getRoomId() {
         return roomId;
     }
