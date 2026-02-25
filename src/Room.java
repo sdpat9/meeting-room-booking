@@ -18,7 +18,7 @@ public class Room {
         if (newCapacity <= 0) {
             throw new IllegalArgumentException("Capacity must be positive");
         }
-        
+
         this.capacity = newCapacity;
     }
 
