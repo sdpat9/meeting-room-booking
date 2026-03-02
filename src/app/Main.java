@@ -2,7 +2,6 @@ package app;
 
 import model.Booking;
 import model.Room;
-import model.Status;
 import service.BookingService;
 
 import java.util.List;
@@ -30,6 +29,7 @@ public class Main {
         Room r2 = service.createRoom("Sigma", 12, true);
 
         System.out.println("Rooms: ");
+
         for (Room r : service.listRooms()) {
             System.out.printf(" id=%d, name=%s, capacity=%d, active=%s%n",
                     r.getId(), r.getName(), r.getCapacity(), r.isActive());
@@ -38,12 +38,12 @@ public class Main {
         LocalDateTime s1 = LocalDateTime.of(2026, 3, 1, 10, 0);
         LocalDateTime e1 = LocalDateTime.of(2026, 3,1,11,0);
 
-        Booking b1 = new Booking(r1.getId(), 101L, s1, e1);
+        Booking b1 = service.createBooking(r1.getId(), 101L, s1, e1);
         System.out.println("\nCreated Booking: id=" + b1.getId());
 
         try {
             service.createBooking(
-                    r2.getId(),
+                    r1.getId(),
                     202L,
                     LocalDateTime.of(2026, 3, 1, 10, 30),
                     LocalDateTime.of(2026, 3, 1, 11, 30)
