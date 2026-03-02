@@ -1,3 +1,8 @@
+package service;
+
+import model.Booking;
+import model.Room;
+
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;

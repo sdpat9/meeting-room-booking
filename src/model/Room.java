@@ -1,3 +1,5 @@
+package model;
+
 public class Room {
     private Long id;
     private String name;
@@ -44,7 +46,7 @@ public class Room {
 
     @Override
     public String toString() {
-        return "Room{" +
+        return "model.Room{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", capacity=" + capacity +

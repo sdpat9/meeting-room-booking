@@ -1,4 +1,4 @@
-# Meeting Room Booking System
+# Meeting model.Room model.Booking System
 
 Backend application for managing meeting rooms and bookings.
 
@@ -8,9 +8,9 @@ This project is an information system for booking meeting rooms.
 
 The current implementation includes:
 
-- Room domain model
-- Booking domain model
-- Booking status management (ACTIVE / CANCELLED)
+- model.Room domain model
+- model.Booking domain model
+- model.Booking status management (ACTIVE / CANCELLED)
 - Validation logic (capacity, booking duration, time constraints)
 - Overlap checking for bookings
 
@@ -21,14 +21,14 @@ The project is currently implemented as a core domain logic module (without REST
 ## 🏗 Architecture (Current Stage)
 
 Domain layer:
-- `Room`
-- `Booking`
-- `Status`
+- `model.Room`
+- `model.Booking`
+- `model.Status`
 
 Business logic:
-- Booking validation
+- model.Booking validation
 - Overlap detection
-- Booking cancellation
+- model.Booking cancellation
 
 ---
 
