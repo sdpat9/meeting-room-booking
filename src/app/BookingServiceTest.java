@@ -2,6 +2,9 @@ package app;
 
 import model.Status;
 import org.junit.jupiter.api.Test;
+import repository.BookingRepository;
+import repository.InMemoryBookingRepository;
+import repository.InMemoryRoomRepository;
 import service.BookingService;
 
 import model.Room;
@@ -17,7 +20,10 @@ class BookingServiceTest {
 
     @Test
     void createRoom_shouldAssignIdAndStoreRoom() {
-        BookingService service = new BookingService();
+        BookingService service = new BookingService(
+                new InMemoryRoomRepository(),
+                new InMemoryBookingRepository()
+        );
 
         Room room = service.createRoom("Omega", 10, true);
 
@@ -32,14 +38,21 @@ class BookingServiceTest {
 
     @Test
     void getRoom_shouldThrowIfNotEqual() {
-        BookingService service = new BookingService();
+        BookingService service = new BookingService(
+                new InMemoryRoomRepository(),
+                new InMemoryBookingRepository()
+        );
 
         assertThrows(NoSuchElementException.class, () -> service.getRoom(999));
     }
 
     @Test
     void createBooking_shouldThrowOverlapInSomeRoom() {
-        BookingService service = new BookingService();
+        BookingService service = new BookingService(
+                new InMemoryRoomRepository(),
+                new InMemoryBookingRepository()
+
+        );
         Room room = service.createRoom("Omega", 10, true);
 
         service.createBooking(
@@ -61,7 +74,10 @@ class BookingServiceTest {
 
     @Test
     void createBooking_shouldThrowIfRoomInactive() {
-        BookingService service = new BookingService();
+        BookingService service = new BookingService(
+                new InMemoryRoomRepository(),
+                new InMemoryBookingRepository()
+        );
         Room room = service.createRoom("Closed", 10, false);
 
         assertThrows(IllegalStateException.class, () ->
@@ -76,7 +92,10 @@ class BookingServiceTest {
 
     @Test
     void createBooking_shouldAllowSameTimeInDifferentRooms() {
-        BookingService service = new BookingService();
+        BookingService service = new BookingService(
+                new InMemoryRoomRepository(),
+                new InMemoryBookingRepository()
+        );
         Room r1 = service.createRoom("A", 10, true);
         Room r2 = service.createRoom("B", 10, true);
 
@@ -100,7 +119,10 @@ class BookingServiceTest {
 
     @Test
     void cancelBooking_shouldChangeStatus() {
-        BookingService service = new BookingService();
+        BookingService service = new BookingService(
+                new InMemoryRoomRepository(),
+                new InMemoryBookingRepository()
+        );
         Room room = service.createRoom("Omega", 10, true);
 
         Booking b = service.createBooking(
@@ -117,7 +139,10 @@ class BookingServiceTest {
 
     @Test
     void listBookingsForRoom_shouldReturnSortedByStart() {
-        BookingService service = new BookingService();
+        BookingService service = new BookingService(
+                new InMemoryRoomRepository(),
+                new InMemoryBookingRepository()
+        );
         Room room = service.createRoom("Omega", 10, true);
 
         Booking b1 = service.createBooking(

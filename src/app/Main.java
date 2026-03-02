@@ -2,6 +2,8 @@ package app;
 
 import model.Booking;
 import model.Room;
+import repository.InMemoryBookingRepository;
+import repository.InMemoryRoomRepository;
 import service.BookingService;
 
 import java.util.List;
@@ -23,7 +25,10 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        BookingService service = new BookingService();
+        BookingService service = new BookingService(
+                new InMemoryRoomRepository(),
+                new InMemoryBookingRepository()
+        );
 
         Room r1 = service.createRoom("Omega", 8, true);
         Room r2 = service.createRoom("Sigma", 12, true);

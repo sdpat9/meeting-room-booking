@@ -2,34 +2,40 @@ package service;
 
 import model.Booking;
 import model.Room;
+import repository.BookingRepository;
+import repository.RoomRepositry;
 
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class BookingService {
-    private final Map<Long, Room> rooms = new HashMap<>();
-    private final Map<Long, Booking> bookings = new HashMap<>();
+    private final RoomRepositry roomRepositry;
+    private final BookingRepository bookingRepository;
 
     private final AtomicLong roomIdSeq = new AtomicLong(1);
     private final AtomicLong bookingIdSeq = new AtomicLong(1);
+
+    public BookingService(RoomRepositry roomRepositry, BookingRepository bookingRepository) {
+        this.roomRepositry = roomRepositry;
+        this.bookingRepository = bookingRepository;
+    }
 
     public Room createRoom(String name, int capacity, boolean active) {
         long id = roomIdSeq.getAndIncrement();
         Room room = new Room(name, capacity, active);
         room.setId(id);
-        rooms.put(id, room);
+        roomRepositry.save(room);
         return room;
     }
 
     public Room getRoom(long roomId) {
-        Room room = rooms.get(roomId);
-        if (room == null) throw new NoSuchElementException("room not found: " + roomId);
-        return room;
+        return roomRepositry.findById(roomId)
+                .orElseThrow(() -> new NoSuchElementException("Room not found: " + roomId));
     }
 
     public List<Room> listRooms() {
-        return new ArrayList<>(rooms.values());
+        return roomRepositry.findAll();
     }
 
     public Booking createBooking(long roomId, long userId, LocalDateTime start, LocalDateTime end) {
@@ -38,9 +44,9 @@ public class BookingService {
 
         Booking newBooking = new Booking(roomId, userId, start, end);
 
-        for (Booking existing : bookings.values()) {
+        for (Booking existing : bookingRepository.findAll()) {
             Long exRoomId = existing.getRoomId();
-            if (exRoomId == null || exRoomId != roomId) continue; // другая комната
+            if (exRoomId == null || exRoomId != roomId) continue;
             if (newBooking.overlaps(existing)) {
                 throw new IllegalStateException("booking conflict for room " + roomId);
             }
@@ -48,19 +54,20 @@ public class BookingService {
 
         long id = bookingIdSeq.getAndIncrement();
         newBooking.setId(id);
-        bookings.put(id, newBooking);
+        bookingRepository.save(newBooking);
         return newBooking;
     }
 
-    public void cancelBooking(long bookingId) {
-        Booking booking = bookings.get(bookingId);
-        if (booking == null) throw new NoSuchElementException("booking not found: " + bookingId);
+    public void cancelBooking(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new NoSuchElementException("booking not found: +" + bookingId));
         booking.cancel();
+        bookingRepository.save(booking);
     }
 
     public List<Booking> listBookingsForRoom(long roomId) {
         List<Booking> result = new ArrayList<>();
-        for (Booking b : bookings.values()) {
+        for (Booking b : bookingRepository.findAll()) {
             Long bRoomId = b.getRoomId();
             if (bRoomId != null && bRoomId == roomId) {
                 result.add(b);
