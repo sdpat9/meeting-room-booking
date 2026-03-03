@@ -1,9 +1,9 @@
-package service;
+package by.bsuir.meetingroombooking.service;
 
-import model.Booking;
-import model.Room;
-import repository.BookingRepository;
-import repository.RoomRepositry;
+import by.bsuir.meetingroombooking.model.Booking;
+import by.bsuir.meetingroombooking.model.Room;
+import by.bsuir.meetingroombooking.repository.BookingRepository;
+import by.bsuir.meetingroombooking.repository.RoomRepositry;
 
 import java.time.LocalDateTime;
 import java.util.*;

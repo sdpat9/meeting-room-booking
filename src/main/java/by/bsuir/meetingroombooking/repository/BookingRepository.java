@@ -1,7 +1,7 @@
-package repository;
+package by.bsuir.meetingroombooking.repository;
 
 import com.sun.source.tree.LambdaExpressionTree;
-import model.Booking;
+import by.bsuir.meetingroombooking.model.Booking;
 
 import java.util.Optional;
 import java.util.List;

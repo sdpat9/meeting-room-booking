@@ -1,6 +1,6 @@
-package repository;
+package by.bsuir.meetingroombooking.repository;
 
-import model.Room;
+import by.bsuir.meetingroombooking.model.Room;
 
 import java.util.Optional;
 import java.util.List;

@@ -1,6 +1,6 @@
-package repository;
+package by.bsuir.meetingroombooking.repository;
 
-import model.Booking;
+import by.bsuir.meetingroombooking.model.Booking;
 
 import java.util.*;
 

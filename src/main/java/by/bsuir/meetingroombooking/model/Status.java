@@ -1,4 +1,4 @@
-package model;
+package by.bsuir.meetingroombooking.model;
 
 public enum Status {
     ACTIVE,

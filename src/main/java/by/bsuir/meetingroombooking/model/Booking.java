@@ -1,4 +1,4 @@
-package model;
+package by.bsuir.meetingroombooking.model;
 
 import java.time.LocalDateTime;
 import java.time.Duration;
