@@ -1,9 +1,11 @@
 package by.bsuir.meetingroombooking.repository;
 
 import by.bsuir.meetingroombooking.model.Room;
+import org.springframework.stereotype.Repository;
 
 import java.util.*;
 
+@Repository
 public class InMemoryRoomRepository implements RoomRepositry {
     private final Map<Long, Room> storage = new HashMap<>();
 

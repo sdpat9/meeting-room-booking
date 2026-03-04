@@ -4,11 +4,13 @@ import by.bsuir.meetingroombooking.model.Booking;
 import by.bsuir.meetingroombooking.model.Room;
 import by.bsuir.meetingroombooking.repository.BookingRepository;
 import by.bsuir.meetingroombooking.repository.RoomRepositry;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
+@Service
 public class BookingService {
     private final RoomRepositry roomRepositry;
     private final BookingRepository bookingRepository;
@@ -75,5 +77,10 @@ public class BookingService {
         }
         result.sort(Comparator.comparing(Booking::getStart));
         return result;
+    }
+
+    public void deactivateRoom(Long roomId) {
+        Room room = getRoom(roomId);
+        room.setActive(false);
     }
 }

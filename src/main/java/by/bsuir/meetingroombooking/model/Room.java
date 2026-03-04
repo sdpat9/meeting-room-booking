@@ -28,6 +28,10 @@ public class Room {
         this.id = id;
     }
 
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
     public Long getId() {
         return id;
     }
