@@ -1,0 +1,11 @@
+/Users/sdpat/kurs/meeting-room-booking/src/main/java/by/bsuir/meetingroombooking/MeetingRoomBookingApplication.java
+/Users/sdpat/kurs/meeting-room-booking/src/main/java/by/bsuir/meetingroombooking/controller/BookingController.java
+/Users/sdpat/kurs/meeting-room-booking/src/main/java/by/bsuir/meetingroombooking/controller/RoomController.java
+/Users/sdpat/kurs/meeting-room-booking/src/main/java/by/bsuir/meetingroombooking/model/Booking.java
+/Users/sdpat/kurs/meeting-room-booking/src/main/java/by/bsuir/meetingroombooking/model/Room.java
+/Users/sdpat/kurs/meeting-room-booking/src/main/java/by/bsuir/meetingroombooking/model/Status.java
+/Users/sdpat/kurs/meeting-room-booking/src/main/java/by/bsuir/meetingroombooking/repository/BookingRepository.java
+/Users/sdpat/kurs/meeting-room-booking/src/main/java/by/bsuir/meetingroombooking/repository/InMemoryBookingRepository.java
+/Users/sdpat/kurs/meeting-room-booking/src/main/java/by/bsuir/meetingroombooking/repository/InMemoryRoomRepository.java
+/Users/sdpat/kurs/meeting-room-booking/src/main/java/by/bsuir/meetingroombooking/repository/RoomRepositry.java
+/Users/sdpat/kurs/meeting-room-booking/src/main/java/by/bsuir/meetingroombooking/service/BookingService.java

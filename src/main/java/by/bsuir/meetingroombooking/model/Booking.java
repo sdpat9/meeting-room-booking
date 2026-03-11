@@ -1,17 +1,32 @@
 package by.bsuir.meetingroombooking.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+
 import java.time.LocalDateTime;
 import java.time.Duration;
 
+@Entity
 public class Booking {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long roomId;
     private Long userId;
     private LocalDateTime start;
     private LocalDateTime end;
+
+    @Enumerated(EnumType.STRING)
     private Status status;
 
     private static final Duration MIN_DURATION = Duration.ofMinutes(15);
+
+    protected Booking() {
+    }
 
     public Booking(Long roomId, Long userId, LocalDateTime start, LocalDateTime end) {
 

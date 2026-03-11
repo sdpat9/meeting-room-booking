@@ -1,0 +1,13 @@
+by/bsuir/meetingroombooking/model/Booking.class
+by/bsuir/meetingroombooking/controller/RoomController.class
+by/bsuir/meetingroombooking/model/Room.class
+by/bsuir/meetingroombooking/controller/BookingController$CreateBookingRequest.class
+by/bsuir/meetingroombooking/model/Status.class
+by/bsuir/meetingroombooking/controller/RoomController$CreateRoomRequest.class
+by/bsuir/meetingroombooking/controller/BookingController.class
+by/bsuir/meetingroombooking/service/BookingService.class
+by/bsuir/meetingroombooking/MeetingRoomBookingApplication.class
+by/bsuir/meetingroombooking/repository/InMemoryBookingRepository.class
+by/bsuir/meetingroombooking/repository/RoomRepositry.class
+by/bsuir/meetingroombooking/repository/BookingRepository.class
+by/bsuir/meetingroombooking/repository/InMemoryRoomRepository.class
