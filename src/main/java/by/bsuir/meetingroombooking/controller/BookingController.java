@@ -1,9 +1,12 @@
 package by.bsuir.meetingroombooking.controller;
 
+import by.bsuir.meetingroombooking.dto.BookingResponse;
 import by.bsuir.meetingroombooking.model.Booking;
 import by.bsuir.meetingroombooking.service.BookingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import by.bsuir.meetingroombooking.dto.CreateBookingRequest;
+import by.bsuir.meetingroombooking.dto.BookingResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,18 +21,35 @@ public class BookingController {
     }
 
     @GetMapping("/room/{roomId}")
-    public List<Booking> listBookingsForRoom(@PathVariable Long roomId) {
-        return service.listBookingsForRoom(roomId);
+    public List<BookingResponse> listBookingsForRoom(@PathVariable Long roomId) {
+        return service.listBookingsForRoom(roomId)
+                .stream()
+                .map(booking -> new BookingResponse(
+                        booking.getId(),
+                        booking.getRoomId(),
+                        booking.getStart(),
+                        booking.getEnd(),
+                        booking.getStatus()
+                ))
+                .toList();
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Booking createBooking(@RequestBody CreateBookingRequest req) {
-        return service.createBooking(
-                req.roomId,
+    public BookingResponse createBooking(@RequestBody CreateBookingRequest req) {
+        Booking booking = service.createBooking(
+                req.roomId(),
                 req.userId(),
-                req.start,
-                req.end
+                req.start(),
+                req.end()
+        );
+
+        return new BookingResponse(
+                booking.getId(),
+                booking.getRoomId(),
+                booking.getStart(),
+                booking.getEnd(),
+                booking.getStatus()
         );
     }
 
@@ -38,11 +58,4 @@ public class BookingController {
     public void cancelBooking(@PathVariable Long bookingId) {
         service.cancelBooking(bookingId);
     }
-
-    public record CreateBookingRequest(
-            Long roomId,
-            Long userId,
-            LocalDateTime start,
-            LocalDateTime end
-    ) {}
 }

@@ -36,10 +36,6 @@ public class Room {
         this.capacity = newCapacity;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public void setActive(boolean active) {
         this.active = active;
     }
