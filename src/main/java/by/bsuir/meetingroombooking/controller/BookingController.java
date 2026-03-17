@@ -3,10 +3,13 @@ package by.bsuir.meetingroombooking.controller;
 import by.bsuir.meetingroombooking.dto.BookingResponse;
 import by.bsuir.meetingroombooking.model.Booking;
 import by.bsuir.meetingroombooking.service.BookingService;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
 import by.bsuir.meetingroombooking.dto.CreateBookingRequest;
 import by.bsuir.meetingroombooking.dto.BookingResponse;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
+
 import java.util.List;
 
 @RestController
@@ -34,7 +37,7 @@ public class BookingController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public BookingResponse createBooking(@RequestBody CreateBookingRequest req) {
+    public BookingResponse createBooking(@Valid @RequestBody CreateBookingRequest req) {
         Booking booking = service.createBooking(
                 req.roomId(),
                 req.userId(),

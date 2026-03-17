@@ -4,10 +4,11 @@ import by.bsuir.meetingroombooking.dto.RoomResponse;
 import by.bsuir.meetingroombooking.model.Room;
 import by.bsuir.meetingroombooking.repository.RoomRepository;
 import by.bsuir.meetingroombooking.service.BookingService;
+import by.bsuir.meetingroombooking.dto.CreateRoomRequest;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import by.bsuir.meetingroombooking.dto.CreateRoomRequest;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class RoomController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public RoomResponse createRoom(@RequestBody CreateRoomRequest req) {
+    public RoomResponse createRoom(@Valid @RequestBody CreateRoomRequest req) {
         Room room = bookingService.createRoom(req.name(),req.capacity(), req.active());
 
         return new RoomResponse (
