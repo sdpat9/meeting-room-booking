@@ -7,12 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import by.bsuir.meetingroombooking.dto.CreateBookingRequest;
 import by.bsuir.meetingroombooking.dto.BookingResponse;
-
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/bookings")
+@RequestMapping("/api/bookings")
 public class BookingController {
     private final BookingService service;
 
