@@ -2,6 +2,25 @@ package by.bsuir.meetingroombooking.repository;
 
 import by.bsuir.meetingroombooking.model.Room;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
-public interface RoomRepository extends JpaRepository<Room, Long>{
+import java.time.LocalDateTime;
+import java.util.List;
+
+public interface RoomRepository extends JpaRepository<Room, Long> {
+
+    @Query("""
+            select r
+            from Room r
+            where r.active = true
+              and not exists (
+                  select b.id
+                  from Booking b
+                  where b.room = r
+                  and b.status = by.bsuir.meetingroombooking.model.Status.ACTIVE
+                  and b.start < :end
+                  and b.end > :start
+              )
+            """)
+    List<Room> findAllAvailableRooms(LocalDateTime start, LocalDateTime end);
 }

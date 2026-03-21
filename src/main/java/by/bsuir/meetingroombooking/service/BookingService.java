@@ -81,20 +81,18 @@ public class BookingService {
         room.setActive(false);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Room> findAllAvailAbleRooms(LocalDateTime start, LocalDateTime end) {
-
         List<Room> allRooms = roomRepository.findAll();
 
-        return allRooms.stream()
-                .filter(Room::isActive)
-                .filter(room ->
-                        !bookingRepository.existsByRoom_IdAndStartBeforeAndEndAfter(
-                                room.getId(),
-                                end,
-                                start
-                        )
-                )
-                .toList();
+        if (start == null || end == null) {
+            throw new IllegalArgumentException("start/end is required");
+        }
+
+        if (!start.isBefore(end)) {
+            throw new IllegalArgumentException("start must be before end");
+        }
+
+        return roomRepository.findAllAvailableRooms(start, end);
     }
 }
