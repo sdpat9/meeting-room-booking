@@ -4,8 +4,11 @@ import by.bsuir.meetingroombooking.model.Booking;
 import by.bsuir.meetingroombooking.model.Room;
 import by.bsuir.meetingroombooking.repository.BookingRepository;
 import by.bsuir.meetingroombooking.repository.RoomRepository;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -68,10 +71,8 @@ public class BookingService {
     }
 
     @Transactional(readOnly = true)
-    public List<Booking> listBookingsForRoom(Long roomId) {
-        List<Booking> result = bookingRepository.findAllByRoomId(roomId);
-        result.sort(Comparator.comparing(Booking::getStart));
-        return result;
+    public Page<Booking> listBookingsForRoom(Long roomId, Pageable pageable) {
+        return bookingRepository.findAllByRoomId(roomId, pageable);
     }
 
     @Transactional

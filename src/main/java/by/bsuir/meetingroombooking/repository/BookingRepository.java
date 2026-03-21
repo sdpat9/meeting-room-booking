@@ -1,13 +1,15 @@
 package by.bsuir.meetingroombooking.repository;
 
 import by.bsuir.meetingroombooking.model.Booking;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.time.LocalDateTime;
 
 public interface BookingRepository extends JpaRepository<Booking, Long>{
-    List<Booking> findAllByRoomId(Long roomId);
+    Page<Booking> findAllByRoomId(Long roomId, Pageable pageable);
 
     boolean existsByRoom_IdAndStartBeforeAndEndAfter(
             Long roomId,

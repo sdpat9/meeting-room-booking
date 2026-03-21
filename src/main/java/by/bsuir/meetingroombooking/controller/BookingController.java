@@ -9,6 +9,8 @@ import by.bsuir.meetingroombooking.dto.BookingResponse;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import jakarta.validation.Valid;
 
 import java.util.List;
@@ -23,11 +25,11 @@ public class BookingController {
     }
 
     @GetMapping("/room/{roomId}")
-    public List<BookingResponse> listBookingsForRoom(@PathVariable Long roomId) {
-        return service.listBookingsForRoom(roomId)
-                .stream()
-                .map(BookingMapper::toResponse)
-                .toList();
+    public Page<BookingResponse> listBookingsForRoom(
+            @PathVariable Long roomId,
+            Pageable pageable) {
+        return service.listBookingsForRoom(roomId, pageable)
+                .map(BookingMapper::toResponse);
     }
 
     @PostMapping
