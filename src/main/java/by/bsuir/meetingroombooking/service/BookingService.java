@@ -80,4 +80,21 @@ public class BookingService {
         Room room = getRoom(roomId);
         room.setActive(false);
     }
+
+    @Transactional
+    public List<Room> findAllAvailAbleRooms(LocalDateTime start, LocalDateTime end) {
+
+        List<Room> allRooms = roomRepository.findAll();
+
+        return allRooms.stream()
+                .filter(Room::isActive)
+                .filter(room ->
+                        !bookingRepository.existsByRoom_IdAndStartBeforeAndEndAfter(
+                                room.getId(),
+                                end,
+                                start
+                        )
+                )
+                .toList();
+    }
 }

@@ -2,6 +2,7 @@ package by.bsuir.meetingroombooking.controller;
 
 import by.bsuir.meetingroombooking.dto.BookingResponse;
 import by.bsuir.meetingroombooking.dto.PagedResponse;
+import by.bsuir.meetingroombooking.dto.RoomResponse;
 import by.bsuir.meetingroombooking.mapper.BookingMapper;
 import by.bsuir.meetingroombooking.model.Booking;
 import by.bsuir.meetingroombooking.service.BookingService;
@@ -15,6 +16,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.validation.Valid;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/bookings")
@@ -73,5 +77,21 @@ public class BookingController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void cancelBooking(@PathVariable Long bookingId) {
         service.cancelBooking(bookingId);
+    }
+
+    @GetMapping("/available")
+    public List<RoomResponse> findAvailableRooms(
+            @RequestParam LocalDateTime start,
+            @RequestParam LocalDateTime end
+    ) {
+        return service.findAllAvailAbleRooms(start, end)
+                .stream()
+                .map(room -> new RoomResponse(
+                        room.getId(),
+                        room.getName(),
+                        room.getCapacity(),
+                        room.isActive()
+                ))
+                .toList();
     }
 }
