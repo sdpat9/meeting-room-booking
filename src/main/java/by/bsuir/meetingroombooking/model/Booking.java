@@ -1,11 +1,6 @@
 package by.bsuir.meetingroombooking.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.time.Duration;
@@ -15,7 +10,10 @@ public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long roomId;
+
+    @ManyToOne
+    @JoinColumn(name = "room_id", nullable = false)
+    private Room room;
     private Long userId;
     private LocalDateTime start;
     private LocalDateTime end;
@@ -28,9 +26,9 @@ public class Booking {
     protected Booking() {
     }
 
-    public Booking(Long roomId, Long userId, LocalDateTime start, LocalDateTime end) {
+    public Booking(Room room, Long userId, LocalDateTime start, LocalDateTime end) {
 
-        if (roomId == null) throw new IllegalArgumentException("roomId is required");
+        if (room == null) throw new IllegalArgumentException("room is required");
         if (userId == null) throw new IllegalArgumentException("userId is required");
         if (start == null || end == null) throw new IllegalArgumentException("start/end is required");
 
@@ -43,10 +41,10 @@ public class Booking {
         }
 
         if (Duration.between(start, end).compareTo(MIN_DURATION) < 0) {
-            throw new IllegalArgumentException("booking duration  must be at least " + MIN_DURATION.toMinutes() + " minutes");
+            throw new IllegalArgumentException("booking duration must be at least " + MIN_DURATION.toMinutes() + " minutes");
         }
 
-        this.roomId = roomId;
+        this.room = room;
         this.userId = userId;
         this.start = start;
         this.end = end;
@@ -56,7 +54,7 @@ public class Booking {
     public boolean overlaps(Booking other) {
         if (other == null) return false;
         if (this.status != Status.ACTIVE || other.status != Status.ACTIVE) return false;
-        if (!this.roomId.equals(other.roomId)) return false;
+        if (!this.room.getId().equals(other.room.getId())) return false;
 
         return this.start.isBefore(other.end) && this.end.isAfter(other.start);
     }
@@ -65,16 +63,12 @@ public class Booking {
         this.status = Status.CANCELLED;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Long getId() {
         return id;
     }
 
     public Long getRoomId() {
-        return roomId;
+        return room.getId();
     }
 
     public LocalDateTime getStart() {
@@ -87,6 +81,14 @@ public class Booking {
 
     public Status getStatus() {
         return status;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public Long getUserId() {
+        return userId;
     }
 
  }

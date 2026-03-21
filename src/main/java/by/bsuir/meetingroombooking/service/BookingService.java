@@ -41,9 +41,10 @@ public class BookingService {
     @Transactional
     public Booking createBooking(Long roomId, Long userId, LocalDateTime start, LocalDateTime end) {
         Room room = getRoom(roomId);
+
         if (!room.isActive()) throw new IllegalStateException("room is inactive: " + roomId);
 
-        Booking newBooking = new Booking(roomId, userId, start, end);
+        Booking newBooking = new Booking(room, userId, start, end);
 
         for (Booking existing : bookingRepository.findAllByRoomId(roomId)) {
             if (newBooking.overlaps(existing)) {
@@ -60,7 +61,6 @@ public class BookingService {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NoSuchElementException("booking not found: " + bookingId));
         booking.cancel();
-        bookingRepository.save(booking);
     }
 
     @Transactional(readOnly = true)
@@ -74,6 +74,5 @@ public class BookingService {
     public void deactivateRoom(Long roomId) {
         Room room = getRoom(roomId);
         room.setActive(false);
-        roomRepository.save(room);
     }
 }
