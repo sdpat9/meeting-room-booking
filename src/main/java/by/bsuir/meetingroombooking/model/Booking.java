@@ -6,6 +6,11 @@ import java.time.LocalDateTime;
 import java.time.Duration;
 
 @Entity
+@Table(
+        indexes = {
+                @Index(name = "idx_booking_room_time", columnList = "room_id, start, end")
+        }
+)
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

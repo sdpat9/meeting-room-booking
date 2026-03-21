@@ -46,10 +46,14 @@ public class BookingService {
 
         Booking newBooking = new Booking(room, userId, start, end);
 
-        for (Booking existing : bookingRepository.findAllByRoomId(roomId)) {
-            if (newBooking.overlaps(existing)) {
-                throw new IllegalStateException("booking conflict for room " + roomId);
-            }
+        boolean exists = bookingRepository.existsByRoom_IdAndStartBeforeAndEndAfter(
+                roomId,
+                end,
+                start
+        );
+
+        if (exists) {
+            throw new IllegalStateException("booking conflict for room " + roomId);
         }
 
         bookingRepository.save(newBooking);
