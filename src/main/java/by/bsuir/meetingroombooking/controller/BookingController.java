@@ -5,15 +5,15 @@ import by.bsuir.meetingroombooking.mapper.BookingMapper;
 import by.bsuir.meetingroombooking.model.Booking;
 import by.bsuir.meetingroombooking.service.BookingService;
 import by.bsuir.meetingroombooking.dto.CreateBookingRequest;
-import by.bsuir.meetingroombooking.dto.BookingResponse;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.validation.Valid;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/bookings")
@@ -27,7 +27,21 @@ public class BookingController {
     @GetMapping("/room/{roomId}")
     public Page<BookingResponse> listBookingsForRoom(
             @PathVariable Long roomId,
-            Pageable pageable) {
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "start") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
+    ) {
+        if (size > 50) {
+            throw new IllegalArgumentException("page size must not exceed 50");
+        }
+
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
         return service.listBookingsForRoom(roomId, pageable)
                 .map(BookingMapper::toResponse);
     }
