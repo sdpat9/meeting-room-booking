@@ -1,6 +1,7 @@
 package by.bsuir.meetingroombooking.controller;
 
 import by.bsuir.meetingroombooking.dto.BookingResponse;
+import by.bsuir.meetingroombooking.dto.PagedResponse;
 import by.bsuir.meetingroombooking.mapper.BookingMapper;
 import by.bsuir.meetingroombooking.model.Booking;
 import by.bsuir.meetingroombooking.service.BookingService;
@@ -25,7 +26,7 @@ public class BookingController {
     }
 
     @GetMapping("/room/{roomId}")
-    public Page<BookingResponse> listBookingsForRoom(
+    public PagedResponse<BookingResponse> listBookingsForRoom(
             @PathVariable Long roomId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -42,8 +43,18 @@ public class BookingController {
 
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        return service.listBookingsForRoom(roomId, pageable)
-                .map(BookingMapper::toResponse);
+        Page<Booking> bookingPage = service.listBookingsForRoom(roomId, pageable);
+
+        return new PagedResponse<>(
+                bookingPage.getContent().stream()
+                        .map(BookingMapper::toResponse)
+                        .toList(),
+                bookingPage.getNumber(),
+                bookingPage.getSize(),
+                bookingPage.getTotalElements(),
+                bookingPage.getTotalPages()
+        );
+
     }
 
     @PostMapping
