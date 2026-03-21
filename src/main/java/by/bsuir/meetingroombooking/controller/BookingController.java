@@ -1,6 +1,7 @@
 package by.bsuir.meetingroombooking.controller;
 
 import by.bsuir.meetingroombooking.dto.BookingResponse;
+import by.bsuir.meetingroombooking.mapper.BookingMapper;
 import by.bsuir.meetingroombooking.model.Booking;
 import by.bsuir.meetingroombooking.service.BookingService;
 import by.bsuir.meetingroombooking.dto.CreateBookingRequest;
@@ -25,13 +26,7 @@ public class BookingController {
     public List<BookingResponse> listBookingsForRoom(@PathVariable Long roomId) {
         return service.listBookingsForRoom(roomId)
                 .stream()
-                .map(booking -> new BookingResponse(
-                        booking.getId(),
-                        booking.getRoomId(),
-                        booking.getStart(),
-                        booking.getEnd(),
-                        booking.getStatus()
-                ))
+                .map(BookingMapper::toResponse)
                 .toList();
     }
 
@@ -44,14 +39,7 @@ public class BookingController {
                 req.start(),
                 req.end()
         );
-
-        return new BookingResponse(
-                booking.getId(),
-                booking.getRoomId(),
-                booking.getStart(),
-                booking.getEnd(),
-                booking.getStatus()
-        );
+        return BookingMapper.toResponse(booking);
     }
 
     @DeleteMapping("/{bookingId}")

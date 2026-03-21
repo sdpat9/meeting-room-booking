@@ -1,6 +1,7 @@
 package by.bsuir.meetingroombooking.controller;
 
 import by.bsuir.meetingroombooking.dto.RoomResponse;
+import by.bsuir.meetingroombooking.mapper.RoomMapper;
 import by.bsuir.meetingroombooking.model.Room;
 import by.bsuir.meetingroombooking.repository.RoomRepository;
 import by.bsuir.meetingroombooking.service.BookingService;
@@ -26,12 +27,7 @@ public class RoomController {
     public List<RoomResponse> listRooms() {
         return bookingService.listRooms()
                 .stream()
-                .map(room -> new RoomResponse(
-                        room.getId(),
-                        room.getName(),
-                        room.getCapacity(),
-                        room.isActive()
-                ))
+                .map(RoomMapper::toResponse)
                 .toList();
     }
 
@@ -39,25 +35,13 @@ public class RoomController {
     @ResponseStatus(HttpStatus.CREATED)
     public RoomResponse createRoom(@Valid @RequestBody CreateRoomRequest req) {
         Room room = bookingService.createRoom(req.name(),req.capacity(), req.active());
-
-        return new RoomResponse (
-                room.getId(),
-                room.getName(),
-                room.getCapacity(),
-                room.isActive()
-        );
+        return RoomMapper.toResponse(room);
     }
 
     @GetMapping("/{id}")
     public RoomResponse getRoom(@PathVariable Long id) {
         Room room = bookingService.getRoom(id);
-
-        return new RoomResponse(
-                room.getId(),
-                room.getName(),
-                room.getCapacity(),
-                room.isActive()
-        );
+        return RoomMapper.toResponse(room);
     }
 
     @DeleteMapping("/{id}")
