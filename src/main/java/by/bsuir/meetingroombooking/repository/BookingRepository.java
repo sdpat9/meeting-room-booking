@@ -9,7 +9,7 @@ import java.util.List;
 import java.time.LocalDateTime;
 
 public interface BookingRepository extends JpaRepository<Booking, Long>{
-    Page<Booking> findAllByRoomId(Long roomId, Pageable pageable);
+    Page<Booking> findAllByRoom_Id(Long roomId, Pageable pageable);
 
     boolean existsByRoom_IdAndStartBeforeAndEndAfter(
             Long roomId,

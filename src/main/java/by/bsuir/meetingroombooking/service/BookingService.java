@@ -2,9 +2,10 @@ package by.bsuir.meetingroombooking.service;
 
 import by.bsuir.meetingroombooking.model.Booking;
 import by.bsuir.meetingroombooking.model.Room;
+import by.bsuir.meetingroombooking.model.User;
 import by.bsuir.meetingroombooking.repository.BookingRepository;
 import by.bsuir.meetingroombooking.repository.RoomRepository;
-
+import by.bsuir.meetingroombooking.repository.UserRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,10 +18,14 @@ import java.util.*;
 public class BookingService {
     private final RoomRepository roomRepository;
     private final BookingRepository bookingRepository;
+    private final UserRepository userRepository;
 
-    public BookingService(RoomRepository roomRepository, BookingRepository bookingRepository) {
+    public BookingService(RoomRepository roomRepository,
+                          BookingRepository bookingRepository,
+                          UserRepository userRepository) {
         this.roomRepository = roomRepository;
         this.bookingRepository = bookingRepository;
+        this.userRepository = userRepository;
     }
 
     @Transactional
@@ -37,6 +42,12 @@ public class BookingService {
     }
 
     @Transactional(readOnly = true)
+    public User getUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NoSuchElementException("user not found: " + userId));
+    }
+
+    @Transactional(readOnly = true)
     public List<Room> listRooms() {
         return roomRepository.findAll();
     }
@@ -44,10 +55,17 @@ public class BookingService {
     @Transactional
     public Booking createBooking(Long roomId, Long userId, LocalDateTime start, LocalDateTime end) {
         Room room = getRoom(roomId);
+        User user = getUser(userId);
 
-        if (!room.isActive()) throw new IllegalStateException("room is inactive: " + roomId);
+        if (!room.isActive()) {
+            throw new IllegalStateException("room is inactive: " + roomId);
+        }
 
-        Booking newBooking = new Booking(room, userId, start, end);
+        if (!user.isActive()) {
+            throw new IllegalStateException("user is inactive: " + userId);
+        }
+
+        Booking newBooking = new Booking(room, user, start, end);
 
         boolean exists = bookingRepository.existsByRoom_IdAndStartBeforeAndEndAfter(
                 roomId,
@@ -72,7 +90,7 @@ public class BookingService {
 
     @Transactional(readOnly = true)
     public Page<Booking> listBookingsForRoom(Long roomId, Pageable pageable) {
-        return bookingRepository.findAllByRoomId(roomId, pageable);
+        return bookingRepository.findAllByRoom_Id(roomId, pageable);
     }
 
     @Transactional
@@ -82,9 +100,7 @@ public class BookingService {
     }
 
     @Transactional(readOnly = true)
-    public List<Room> findAllAvailAbleRooms(LocalDateTime start, LocalDateTime end) {
-        List<Room> allRooms = roomRepository.findAll();
-
+    public List<Room> findAllAvailableRooms(LocalDateTime start, LocalDateTime end) {
         if (start == null || end == null) {
             throw new IllegalArgumentException("start/end is required");
         }

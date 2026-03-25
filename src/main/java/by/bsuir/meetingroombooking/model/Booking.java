@@ -19,7 +19,11 @@ public class Booking {
     @ManyToOne
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
-    private Long userId;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id, nullable = false")
+    private User user;
+
     private LocalDateTime start;
     private LocalDateTime end;
 
@@ -31,10 +35,10 @@ public class Booking {
     protected Booking() {
     }
 
-    public Booking(Room room, Long userId, LocalDateTime start, LocalDateTime end) {
+    public Booking(Room room, User user, LocalDateTime start, LocalDateTime end) {
 
         if (room == null) throw new IllegalArgumentException("room is required");
-        if (userId == null) throw new IllegalArgumentException("userId is required");
+        if (user == null) throw new IllegalArgumentException("user is required");
         if (start == null || end == null) throw new IllegalArgumentException("start/end is required");
 
         if (!start.isBefore(end)) {
@@ -50,7 +54,7 @@ public class Booking {
         }
 
         this.room = room;
-        this.userId = userId;
+        this.user = user;
         this.start = start;
         this.end = end;
         this.status = Status.ACTIVE;
@@ -92,8 +96,8 @@ public class Booking {
         return room;
     }
 
-    public Long getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
  }
