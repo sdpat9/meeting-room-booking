@@ -111,4 +111,22 @@ public class BookingService {
 
         return roomRepository.findAllAvailableRooms(start, end);
     }
+
+    @Transactional
+    public User addUser(String name, String email, boolean active) {
+        User user = new User(name, email, active);
+        userRepository.save(user);
+        return user;
+    }
+
+    @Transactional
+    public List<User> listUsers() {
+        return userRepository.findAll();
+    }
+
+    @Transactional
+    public void deactivateUser(Long userId) {
+        User user = getUser(userId);
+        user.setActive(false);
+    }
 }
