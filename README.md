@@ -1,65 +1,155 @@
-# Meeting model.Room model.Booking System
+# Meeting Room Booking System
 
-Backend application for managing meeting rooms and bookings.
+Backend application for booking meeting rooms built with Java 17, Spring Boot, Spring Data JPA, and PostgreSQL.
 
-## 📌 Description
+## Description
 
-This project is an information system for booking meeting rooms.
+This project is a REST API for managing meeting rooms, users, and room bookings.
 
-The current implementation includes:
+The system allows:
+- creating and managing meeting rooms
+- creating and managing users
+- booking rooms for a selected time period
+- preventing booking conflicts
+- searching for available rooms
+- viewing bookings with pagination
+- validating request data
+- handling errors with structured responses
 
-- model.Room domain model
-- model.Booking domain model
-- model.Booking status management (ACTIVE / CANCELLED)
-- Validation logic (capacity, booking duration, time constraints)
-- Overlap checking for bookings
+## Technologies
 
-The project is currently implemented as a core domain logic module (without REST API).
+- Java 17
+- Spring Boot 3.5.11
+- Spring Web
+- Spring Data JPA
+- PostgreSQL
+- Maven
+- Swagger / OpenAPI
+- Docker Compose
 
----
+## Main Features
 
-## 🏗 Architecture (Current Stage)
+### Rooms
+- create a room
+- get room by id
+- list all rooms
+- deactivate a room
+- search available rooms by time range
 
-Domain layer:
-- `model.Room`
-- `model.Booking`
-- `model.Status`
+### Users
+- create a user
+- get user by id
+- list all users
+- deactivate a user
 
-Business logic:
-- model.Booking validation
-- Overlap detection
-- model.Booking cancellation
+### Bookings
+- create booking
+- cancel booking
+- list room bookings with pagination
 
----
+## Business Rules
 
-## 🚀 Planned Features
+- a room must be active to be booked
+- a user must be active to create a booking
+- booking time must be valid: start < end
+- booking cannot start in the past
+- minimum booking duration is 15 minutes
+- maximum booking duration is 8 hours
+- room bookings cannot overlap
+- a user cannot have overlapping bookings
 
-- Spring Boot integration
-- REST API (CRUD for rooms and bookings)
-- Database integration (PostgreSQL)
-- DTO layer
-- Exception handling
-- Unit tests
-- Docker support
+## API Documentation
 
----
+Swagger UI is available at:
 
-## 🛠 Tech Stack (Current)
+http://localhost:8080/swagger-ui/index.html
 
-- Java 17+
-- Git
-- IntelliJ IDEA
+## Running the Project
 
----
+### 1. Clone the repository
 
-## 📂 Project Structure
-src/
-└── main/
-└── java/
-└── …
----
+git clone <your-repository-url>  
+cd meeting-room-booking
 
-## 🎯 Goal
+### 2. Start PostgreSQL
 
-The goal of this project is to build a production-style backend system
-with clean architecture and proper Git history.
+docker compose up -d
+
+### 3. Run the application
+
+mvn spring-boot:run
+
+или через IntelliJ (запустить MeetingRoomBookingApplication)
+
+## Build
+
+mvn clean install
+
+## Example Endpoints
+
+### Rooms
+- GET /api/rooms  
+- POST /api/rooms  
+- GET /api/rooms/{id}  
+- DELETE /api/rooms/{id}  
+- GET /api/rooms/available?start=2026-03-30T10:00:00&end=2026-03-30T11:00:00  
+
+### Users
+- GET /api/users  
+- POST /api/users  
+- GET /api/users/{id}  
+- DELETE /api/users/{id}  
+
+### Bookings
+- POST /api/bookings  
+- GET /api/bookings/room/{roomId}?page=0&size=10&sortBy=start&direction=asc  
+- DELETE /api/bookings/{bookingId}  
+
+## Request Examples
+
+### Create Room
+
+{
+  "name": "Conference Room A",
+  "capacity": 10,
+  "active": true
+}
+
+### Create User
+
+{
+  "name": "Sergey",
+  "email": "sergey@example.com",
+  "active": true
+}
+
+### Create Booking
+
+{
+  "roomId": 1,
+  "userId": 1,
+  "start": "2026-03-30T10:00:00",
+  "end": "2026-03-30T11:00:00"
+}
+
+## Project Structure
+
+src/main/java/by/bsuir/meetingroombooking  
+├── controller  
+├── dto  
+├── exception  
+├── mapper  
+├── model  
+├── repository  
+└── service  
+
+## Future Improvements
+
+- get bookings by user  
+- authentication and authorization  
+- Flyway database migrations  
+- frontend client  
+
+## Author
+
+Student backend project (Java + Spring Boot)
