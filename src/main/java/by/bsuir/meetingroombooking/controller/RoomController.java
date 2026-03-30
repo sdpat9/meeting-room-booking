@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -42,6 +43,22 @@ public class RoomController {
     public RoomResponse getRoom(@PathVariable Long id) {
         Room room = bookingService.getRoom(id);
         return RoomMapper.toResponse(room);
+    }
+
+    @GetMapping("/available")
+    public List<RoomResponse> findAllAvailableRooms(
+            @RequestParam LocalDateTime start,
+            @RequestParam LocalDateTime end
+            ) {
+        return bookingService.findAllAvailableRooms(start, end)
+                .stream()
+                .map(room -> new RoomResponse(
+                        room.getId(),
+                        room.getName(),
+                        room.getCapacity(),
+                        room.isActive()
+                ))
+                .toList();
     }
 
     @DeleteMapping("/{id}")
