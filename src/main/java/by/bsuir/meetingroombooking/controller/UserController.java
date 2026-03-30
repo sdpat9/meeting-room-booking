@@ -41,7 +41,8 @@ public class UserController {
         User user = bookingService.createUser(
                 req.name(),
                 req.email(),
-                req.active()
+                req.active(),
+                req.role()
         );
         return UserMapper.toResponse(user);
     }

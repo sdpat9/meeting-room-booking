@@ -13,19 +13,28 @@ public class User {
     private String name;
     private boolean active;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     protected User(){
     }
 
-    public User(String name, String email, boolean active) {
+    public User(String name, String email, boolean active, Role role) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("name is required");
         }
-        if (email == null || email.isBlank())
+        if (email == null || email.isBlank()) {
             throw new IllegalArgumentException("email is required");
+        }
+
+        if (role == null) {
+            throw new IllegalArgumentException("role is required");
+        }
 
         this.name = name;
         this.email = email;
         this.active = active;
+        this.role = role;
     }
 
     public Long getId() {
@@ -46,5 +55,9 @@ public class User {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public Role getRole() {
+        return role;
     }
 }

@@ -3,6 +3,7 @@ package by.bsuir.meetingroombooking.service;
 import by.bsuir.meetingroombooking.model.Booking;
 import by.bsuir.meetingroombooking.model.Room;
 import by.bsuir.meetingroombooking.model.User;
+import by.bsuir.meetingroombooking.model.Role;
 import by.bsuir.meetingroombooking.repository.BookingRepository;
 import by.bsuir.meetingroombooking.repository.RoomRepository;
 import by.bsuir.meetingroombooking.repository.UserRepository;
@@ -128,8 +129,8 @@ public class BookingService {
     }
 
     @Transactional
-    public User createUser(String name, String email, boolean active) {
-        User user = new User(name, email, active);
+    public User createUser(String name, String email, boolean active, Role role) {
+        User user = new User(name, email, active, role);
         userRepository.save(user);
         return user;
     }
