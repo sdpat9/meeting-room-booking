@@ -72,7 +72,7 @@ public class BookingService {
 
         Booking newBooking = new Booking(room, user, start, end);
 
-        boolean exists = bookingRepository.existsByRoom_IdAndStartBeforeAndEndAfter(
+        boolean roomConflict = bookingRepository.existsByRoom_IdAndStartBeforeAndEndAfter(
                 roomId,
                 end,
                 start
@@ -88,7 +88,7 @@ public class BookingService {
             throw new IllegalStateException("user already has booking in this time");
         }
 
-        if (exists) {
+        if (roomConflict) {
             throw new IllegalStateException("booking conflict for room " + roomId);
         }
 
@@ -115,7 +115,7 @@ public class BookingService {
     }
 
     @Transactional(readOnly = true)
-    public List<Room> findAllAvailableRooms(LocalDateTime start, LocalDateTime end) {
+    public List<Room> findAvailableRooms(LocalDateTime start, LocalDateTime end) {
         if (start == null || end == null) {
             throw new IllegalArgumentException("start/end is required");
         }
@@ -124,7 +124,7 @@ public class BookingService {
             throw new IllegalArgumentException("start must be before end");
         }
 
-        return roomRepository.findAllAvailableRooms(start, end);
+        return roomRepository.findAvailableRooms(start, end);
     }
 
     @Transactional

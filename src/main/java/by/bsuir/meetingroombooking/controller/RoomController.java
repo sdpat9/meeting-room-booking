@@ -50,7 +50,7 @@ public class RoomController {
             @RequestParam LocalDateTime start,
             @RequestParam LocalDateTime end
             ) {
-        return bookingService.findAllAvailableRooms(start, end)
+        return bookingService.findAvailableRooms(start, end)
                 .stream()
                 .map(room -> new RoomResponse(
                         room.getId(),

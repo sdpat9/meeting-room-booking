@@ -44,7 +44,7 @@ public class User {
         return active;
     }
 
-    public void setActive(Boolean active) {
+    public void setActive(boolean active) {
         this.active = active;
     }
 }

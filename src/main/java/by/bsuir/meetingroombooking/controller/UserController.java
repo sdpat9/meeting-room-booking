@@ -38,7 +38,7 @@ public class UserController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UserResponse createUser(@Valid @RequestBody CreateUserRequest req) {
-        User user = bookingService.addUser(
+        User user = bookingService.createUser(
                 req.name(),
                 req.email(),
                 req.active()

@@ -21,7 +21,7 @@ public class Booking {
     private Room room;
 
     @ManyToOne
-    @JoinColumn(name = "user_id, nullable = false")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     private LocalDateTime start;

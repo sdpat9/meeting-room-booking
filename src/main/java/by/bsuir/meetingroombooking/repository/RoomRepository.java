@@ -22,5 +22,5 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
                   and b.end > :start
               )
             """)
-    List<Room> findAllAvailableRooms(LocalDateTime start, LocalDateTime end);
+    List<Room> findAvailableRooms(LocalDateTime start, LocalDateTime end);
 }

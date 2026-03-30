@@ -78,20 +78,4 @@ public class BookingController {
     public void cancelBooking(@PathVariable Long bookingId) {
         service.cancelBooking(bookingId);
     }
-
-    @GetMapping("/available")
-    public List<RoomResponse> findAvailableRooms(
-            @RequestParam LocalDateTime start,
-            @RequestParam LocalDateTime end
-    ) {
-        return service.findAllAvailAbleRooms(start, end)
-                .stream()
-                .map(room -> new RoomResponse(
-                        room.getId(),
-                        room.getName(),
-                        room.getCapacity(),
-                        room.isActive()
-                ))
-                .toList();
-    }
 }
