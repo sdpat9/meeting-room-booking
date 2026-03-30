@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.time.Duration;
 
 @Service
 public class BookingService {
@@ -65,6 +66,10 @@ public class BookingService {
             throw new IllegalStateException("user is inactive: " + userId);
         }
 
+        if (Duration.between(start, end).toHours() > 8) {
+            throw new IllegalStateException("booking cannot exceed 8 hours");
+        }
+
         Booking newBooking = new Booking(room, user, start, end);
 
         boolean exists = bookingRepository.existsByRoom_IdAndStartBeforeAndEndAfter(
@@ -72,6 +77,16 @@ public class BookingService {
                 end,
                 start
         );
+
+        boolean userConflict = bookingRepository.existsByUser_IdAndStartBeforeAndEndAfter(
+                userId,
+                end,
+                start
+        );
+
+        if (userConflict) {
+            throw new IllegalStateException("user already has booking in this time");
+        }
 
         if (exists) {
             throw new IllegalStateException("booking conflict for room " + roomId);
@@ -113,13 +128,13 @@ public class BookingService {
     }
 
     @Transactional
-    public User addUser(String name, String email, boolean active) {
+    public User createUser(String name, String email, boolean active) {
         User user = new User(name, email, active);
         userRepository.save(user);
         return user;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<User> listUsers() {
         return userRepository.findAll();
     }

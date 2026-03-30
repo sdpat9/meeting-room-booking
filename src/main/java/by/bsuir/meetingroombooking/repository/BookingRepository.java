@@ -16,4 +16,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long>{
             LocalDateTime end,
             LocalDateTime start
     );
+
+    boolean existsByUser_IdAndStartBeforeAndEndAfter(
+            Long userId,
+            LocalDateTime end,
+            LocalDateTime start
+    );
 }
