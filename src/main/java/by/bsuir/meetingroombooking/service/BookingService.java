@@ -110,7 +110,10 @@ public class BookingService {
     }
 
     @Transactional
-    public void deactivateRoom(Long roomId) {
+    public void deactivateRoom(Long roomId, Long adminId) {
+        User admin = getUser(adminId);
+        requireAdmin(admin);
+
         Room room = getRoom(roomId);
         room.setActive(false);
     }
@@ -141,7 +144,10 @@ public class BookingService {
     }
 
     @Transactional
-    public void deactivateUser(Long userId) {
+    public void deactivateUser(Long userId, Long adminId) {
+        User admin = getUser(adminId);
+        requireAdmin(admin);
+
         User user = getUser(userId);
         user.setActive(false);
     }
@@ -150,5 +156,11 @@ public class BookingService {
     public Page<Booking> listBookingsForUser(Long userId, Pageable pageable) {
         getUser(userId);
         return bookingRepository.findAllByUser_Id(userId, pageable);
+    }
+
+    private void requireAdmin(User user) {
+        if (user.getRole() != Role.ADMIN) {
+            throw new IllegalStateException("admin role is required");
+        }
     }
 }

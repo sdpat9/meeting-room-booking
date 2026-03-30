@@ -63,7 +63,10 @@ public class RoomController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deactivate(@PathVariable Long id) {
-        bookingService.deactivateRoom(id);
+    public void deactivate(
+            @PathVariable Long id,
+            @RequestParam Long adminId
+    ) {
+        bookingService.deactivateRoom(id, adminId);
     }
 }

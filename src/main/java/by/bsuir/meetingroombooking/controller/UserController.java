@@ -49,7 +49,9 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deactivateUser(@PathVariable Long id ) {
-        bookingService.deactivateUser(id);
+    public void deactivateUser(
+            @PathVariable Long id,
+            @RequestParam Long adminId) {
+        bookingService.deactivateUser(id, adminId);
     }
 }
