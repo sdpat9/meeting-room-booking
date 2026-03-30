@@ -8,6 +8,7 @@ public record BookingResponse(
         Long roomId,
         LocalDateTime start,
         LocalDateTime end,
+        LocalDateTime createdAt,
         Status status
 ) {
 }

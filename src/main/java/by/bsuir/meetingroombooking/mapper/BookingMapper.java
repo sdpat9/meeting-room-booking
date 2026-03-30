@@ -11,6 +11,7 @@ public class BookingMapper {
                 booking.getRoomId(),
                 booking.getStart(),
                 booking.getEnd(),
+                booking.getCreatedAt(),
                 booking.getStatus()
         );
     }

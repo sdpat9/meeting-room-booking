@@ -27,6 +27,9 @@ public class Booking {
     private LocalDateTime start;
     private LocalDateTime end;
 
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
     @Enumerated(EnumType.STRING)
     private Status status;
 
@@ -57,6 +60,7 @@ public class Booking {
         this.user = user;
         this.start = start;
         this.end = end;
+        this.createdAt = LocalDateTime.now();
         this.status = Status.ACTIVE;
     }
 
@@ -100,4 +104,7 @@ public class Booking {
         return user;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
  }
