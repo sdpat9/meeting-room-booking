@@ -22,4 +22,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long>{
             LocalDateTime end,
             LocalDateTime start
     );
+
+    Page<Booking> findAllByUser_Id(Long userId, Pageable pageable);
 }

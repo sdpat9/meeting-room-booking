@@ -144,4 +144,10 @@ public class BookingService {
         User user = getUser(userId);
         user.setActive(false);
     }
+
+    @Transactional(readOnly = true)
+    public Page<Booking> listBookingsForUser(Long userId, Pageable pageable) {
+        getUser(userId);
+        return bookingRepository.findAllByUser_Id(userId, pageable);
+    }
 }

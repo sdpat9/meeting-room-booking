@@ -73,6 +73,37 @@ public class BookingController {
         return BookingMapper.toResponse(booking);
     }
 
+    @GetMapping("/user/{userId}")
+    public PagedResponse<BookingResponse> listBookingsForUser(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "start") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
+    ) {
+        if (size > 50) {
+            throw new IllegalArgumentException("page size must not exceed 50");
+        }
+
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<Booking> bookingPage = service.listBookingsForUser(userId, pageable);
+
+        return new PagedResponse<>(
+                bookingPage.getContent().stream()
+                        .map(BookingMapper::toResponse)
+                        .toList(),
+                bookingPage.getNumber(),
+                bookingPage.getSize(),
+                bookingPage.getTotalElements(),
+                bookingPage.getTotalPages()
+        );
+    }
+
     @DeleteMapping("/{bookingId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void cancelBooking(@PathVariable Long bookingId) {
