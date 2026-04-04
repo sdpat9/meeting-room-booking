@@ -163,6 +163,16 @@ public class BookingService {
                 .orElseThrow(() -> new NoSuchElementException("booking not found: " + bookingId));
     }
 
+    @Transactional
+    public Room updateRoom(Long roomId, String name, int capacity, boolean active, Long adminId) {
+        User admin = getUser(adminId);
+        requireAdmin(admin);
+
+        Room room = getRoom(roomId);
+        room.update(name, capacity, active);
+        return room;
+    }
+
     private void requireAdmin(User user) {
         if (user.getRole() != Role.ADMIN) {
             throw new IllegalStateException("admin role is required");

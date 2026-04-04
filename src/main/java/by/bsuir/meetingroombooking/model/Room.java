@@ -36,6 +36,19 @@ public class Room {
         this.capacity = newCapacity;
     }
 
+    public void rename(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Room name must not be blank");
+        }
+        this.name = name;
+    }
+
+    public void update(String name, int capacity, boolean active) {
+        rename(name);
+        changeCapacity(capacity);
+        setActive(active);
+    }
+
     public void setActive(boolean active) {
         this.active = active;
     }

@@ -1,6 +1,7 @@
 package by.bsuir.meetingroombooking.controller;
 
 import by.bsuir.meetingroombooking.dto.RoomResponse;
+import by.bsuir.meetingroombooking.dto.UpdateRoomRequest;
 import by.bsuir.meetingroombooking.mapper.RoomMapper;
 import by.bsuir.meetingroombooking.model.Room;
 import by.bsuir.meetingroombooking.repository.RoomRepository;
@@ -59,6 +60,22 @@ public class RoomController {
                         room.isActive()
                 ))
                 .toList();
+    }
+
+    @PutMapping("/{id}")
+    public RoomResponse updateRoom(
+            @PathVariable Long id,
+            @RequestParam Long adminId,
+            @Valid @RequestBody UpdateRoomRequest req
+            ) {
+        Room room = bookingService.updateRoom(
+                id,
+                req.name(),
+                req.capacity(),
+                req.active(),
+                adminId
+        );
+        return RoomMapper.toResponse(room);
     }
 
     @DeleteMapping("/{id}")
