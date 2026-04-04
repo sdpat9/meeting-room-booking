@@ -67,6 +67,8 @@ public class BookingController {
         Booking booking = service.createBooking(
                 req.roomId(),
                 req.userId(),
+                req.title(),
+                req.participantsCount(),
                 req.start(),
                 req.end()
         );

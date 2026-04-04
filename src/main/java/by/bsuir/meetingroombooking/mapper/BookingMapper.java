@@ -10,6 +10,8 @@ public class BookingMapper {
                 booking.getId(),
                 booking.getRoomId(),
                 booking.getUserId(),
+                booking.getTitle(),
+                booking.getParticipantsCount(),
                 booking.getStart(),
                 booking.getEnd(),
                 booking.getCreatedAt(),

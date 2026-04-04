@@ -52,7 +52,13 @@ public class BookingService {
     }
 
     @Transactional
-    public Booking createBooking(Long roomId, Long userId, LocalDateTime start, LocalDateTime end) {
+    public Booking createBooking(
+            Long roomId,
+            Long userId,
+            String title,
+            int participantsCount,
+            LocalDateTime start,
+            LocalDateTime end) {
         Room room = getRoom(roomId);
         User user = getUser(userId);
 
@@ -68,16 +74,22 @@ public class BookingService {
             throw new IllegalStateException("booking cannot exceed 8 hours");
         }
 
-        Booking newBooking = new Booking(room, user, start, end);
+        Booking newBooking = new Booking(
+                room,
+                user,
+                title,
+                participantsCount,
+                start,
+                end);
 
-        boolean roomConflict = bookingRepository.existsByRoom_IdAndStartBeforeAndEndAfter(
+        boolean roomConflict = bookingRepository.existsByRoom_IdAndStatusAndStartBeforeAndEndAfter(
                 roomId,
                 Status.ACTIVE,
                 end,
                 start
         );
 
-        boolean userConflict = bookingRepository.existsByUser_IdAndStartBeforeAndEndAfter(
+        boolean userConflict = bookingRepository.existsByUser_IdAndStatusAndStartBeforeAndEndAfter(
                 userId,
                 Status.ACTIVE,
                 end,

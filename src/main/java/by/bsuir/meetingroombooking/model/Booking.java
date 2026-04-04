@@ -7,8 +7,9 @@ import java.time.Duration;
 
 @Entity
 @Table(
+        name = "bookings",
         indexes = {
-                @Index(name = "idx_booking_room_time", columnList = "room_id, start, end")
+                @Index(name = "idx_booking_room_time", columnList = "room_id, start_time, end_time")
         }
 )
 public class Booking {
@@ -24,8 +25,14 @@ public class Booking {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(name = "start_time", nullable = false)
     private LocalDateTime start;
+
+    @Column(name = "end_time", nullable = false)
     private LocalDateTime end;
+
+    private String title;
+    private int participantsCount;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -38,7 +45,7 @@ public class Booking {
     protected Booking() {
     }
 
-    public Booking(Room room, User user, LocalDateTime start, LocalDateTime end) {
+    public Booking(Room room, User user, String title, int participantsCount, LocalDateTime start, LocalDateTime end) {
 
         if (room == null) throw new IllegalArgumentException("room is required");
         if (user == null) throw new IllegalArgumentException("user is required");
@@ -56,8 +63,22 @@ public class Booking {
             throw new IllegalArgumentException("booking duration must be at least " + MIN_DURATION.toMinutes() + " minutes");
         }
 
+        if (title == null || title.isBlank()) {
+            throw new IllegalArgumentException("title is required");
+        }
+
+        if (participantsCount <= 0) {
+            throw new IllegalArgumentException("participants count must be positive");
+        }
+
+        if (participantsCount > room.getCapacity()) {
+            throw new IllegalArgumentException("participants count is exceeds room capacity");
+        }
+
         this.room = room;
         this.user = user;
+        this.title = title;
+        this.participantsCount = participantsCount;
         this.start = start;
         this.end = end;
         this.createdAt = LocalDateTime.now();
@@ -85,6 +106,14 @@ public class Booking {
 
     public Long getRoomId() {
         return room.getId();
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public int getParticipantsCount() {
+        return participantsCount;
     }
 
     public LocalDateTime getStart() {

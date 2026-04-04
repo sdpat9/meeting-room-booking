@@ -12,16 +12,16 @@ import java.time.LocalDateTime;
 public interface BookingRepository extends JpaRepository<Booking, Long>{
     Page<Booking> findAllByRoom_Id(Long roomId, Pageable pageable);
 
-    boolean existsByRoom_IdAndStartBeforeAndEndAfter(
+    boolean existsByRoom_IdAndStatusAndStartBeforeAndEndAfter(
             Long roomId,
             Status status,
             LocalDateTime end,
             LocalDateTime start
     );
 
-    boolean existsByUser_IdAndStartBeforeAndEndAfter(
+    boolean existsByUser_IdAndStatusAndStartBeforeAndEndAfter(
             Long userId,
-            Status staus,
+            Status status,
             LocalDateTime end,
             LocalDateTime start
     );
