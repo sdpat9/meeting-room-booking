@@ -132,6 +132,10 @@ public class BookingService {
 
     @Transactional
     public User createUser(String name, String email, boolean active, Role role) {
+        if (userRepository.existsByEmail(email)) {
+            throw new IllegalStateException("email is already in use: " + email);
+        }
+
         User user = new User(name, email, active, role);
         userRepository.save(user);
         return user;
@@ -171,6 +175,21 @@ public class BookingService {
         Room room = getRoom(roomId);
         room.update(name, capacity, active);
         return room;
+    }
+
+    @Transactional
+    public User updateUser(Long userId, String name, String email, boolean active, Role role, Long adminId) {
+        User admin = getUser(adminId);
+        requireAdmin(admin);
+
+        User user = getUser(userId);
+
+        if (userRepository.existsByEmailAndIdNot(email, userId)) {
+            throw new IllegalStateException("email is already in use: " + email);
+        }
+
+        user.update(name, email, active, role);
+        return user;
     }
 
     private void requireAdmin(User user) {

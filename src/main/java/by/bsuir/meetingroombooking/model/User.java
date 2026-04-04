@@ -37,6 +37,33 @@ public class User {
         this.role = role;
     }
 
+    public void rename(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("name is required");
+        }
+        this.name = name;
+    }
+
+    public void changeEmail(String email) {
+        if (email == null || email.isBlank()) {
+            throw new IllegalArgumentException("email is required");
+        }
+    }
+
+    public void changeRole(Role role) {
+        if (role == null) {
+            throw new IllegalArgumentException("role is required");
+        }
+        this.role = role;
+    }
+
+    public void update(String name, String email, boolean active, Role role) {
+        rename(name);
+        changeEmail(email);
+        setActive(active);
+        changeRole(role);
+    }
+
     public Long getId() {
         return id;
     }

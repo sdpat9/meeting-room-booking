@@ -1,6 +1,7 @@
 package by.bsuir.meetingroombooking.controller;
 
 import by.bsuir.meetingroombooking.dto.CreateUserRequest;
+import by.bsuir.meetingroombooking.dto.UpdateUserRequest;
 import by.bsuir.meetingroombooking.dto.UserResponse;
 import by.bsuir.meetingroombooking.mapper.UserMapper;
 import by.bsuir.meetingroombooking.model.User;
@@ -43,6 +44,23 @@ public class UserController {
                 req.email(),
                 req.active(),
                 req.role()
+        );
+        return UserMapper.toResponse(user);
+    }
+
+    @PutMapping("/{id}")
+    public UserResponse updateUser(
+            @PathVariable Long id,
+            @RequestParam Long adminId,
+            @Valid @RequestBody UpdateUserRequest req
+            ) {
+        User user = bookingService.updateUser(
+                id,
+                req.name(),
+                req.email(),
+                req.active(),
+                req.role(),
+                adminId
         );
         return UserMapper.toResponse(user);
     }
