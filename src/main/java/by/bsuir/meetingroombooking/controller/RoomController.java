@@ -46,22 +46,6 @@ public class RoomController {
         return RoomMapper.toResponse(room);
     }
 
-    @GetMapping("/available")
-    public List<RoomResponse> findAllAvailableRooms(
-            @RequestParam LocalDateTime start,
-            @RequestParam LocalDateTime end
-            ) {
-        return bookingService.findAvailableRooms(start, end)
-                .stream()
-                .map(room -> new RoomResponse(
-                        room.getId(),
-                        room.getName(),
-                        room.getCapacity(),
-                        room.isActive()
-                ))
-                .toList();
-    }
-
     @PutMapping("/{id}")
     public RoomResponse updateRoom(
             @PathVariable Long id,
@@ -76,6 +60,18 @@ public class RoomController {
                 adminId
         );
         return RoomMapper.toResponse(room);
+    }
+
+    @GetMapping("/available")
+    public List<RoomResponse> findAllAvailableRooms(
+            @RequestParam LocalDateTime start,
+            @RequestParam LocalDateTime end,
+            @RequestParam(required = false) Integer capacity
+    ) {
+        return bookingService.findAvailableRooms(start, end, capacity)
+                .stream()
+                .map(RoomMapper::toResponse)
+                .toList();
     }
 
     @DeleteMapping("/{id}")

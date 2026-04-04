@@ -129,19 +129,6 @@ public class BookingService {
         room.setActive(false);
     }
 
-    @Transactional(readOnly = true)
-    public List<Room> findAvailableRooms(LocalDateTime start, LocalDateTime end) {
-        if (start == null || end == null) {
-            throw new IllegalArgumentException("start/end is required");
-        }
-
-        if (!start.isBefore(end)) {
-            throw new IllegalArgumentException("start must be before end");
-        }
-
-        return roomRepository.findAvailableRooms(start, end);
-    }
-
     @Transactional
     public User createUser(String name, String email, boolean active, Role role) {
         if (userRepository.existsByEmail(email)) {
@@ -202,6 +189,27 @@ public class BookingService {
 
         user.update(name, email, active, role);
         return user;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Room> findAvailableRooms(LocalDateTime start, LocalDateTime end, Integer capacity) {
+        if (start == null || end == null) {
+            throw new IllegalArgumentException("start/end is required");
+        }
+
+        if (!start.isBefore(end)) {
+            throw new IllegalArgumentException("start must be before end");
+        }
+
+        if (capacity != null && capacity < 1) {
+            throw new IllegalArgumentException("capacity must be at least 1");
+        }
+
+        if (capacity == null) {
+            return roomRepository.findAvailableRooms(start, end);
+        }
+
+        return roomRepository.findAvailableRooms(start, end, capacity);
     }
 
     private void requireAdmin(User user) {

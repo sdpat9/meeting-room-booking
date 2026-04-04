@@ -17,10 +17,27 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
                   select b.id
                   from Booking b
                   where b.room = r
-                  and b.status = by.bsuir.meetingroombooking.model.Status.ACTIVE
-                  and b.start < :end
-                  and b.end > :start
+                    and b.status = by.bsuir.meetingroombooking.model.Status.ACTIVE
+                    and b.start < :end
+                    and b.end > :start
               )
             """)
     List<Room> findAvailableRooms(LocalDateTime start, LocalDateTime end);
+
+
+    @Query("""
+            select r
+            from Room r
+            where r.active = true
+              and r.capacity >= :capacity
+              and not exists (
+                  select b.id
+                  from Booking b
+                  where b.room = r
+                    and b.status = by.bsuir.meetingroombooking.model.Status.ACTIVE
+                    and b.start < :end
+                    and b.end > :start
+              )
+            """)
+    List<Room> findAvailableRooms(LocalDateTime start, LocalDateTime end, Integer capacity);
 }
