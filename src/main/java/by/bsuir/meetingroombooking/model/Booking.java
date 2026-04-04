@@ -73,6 +73,9 @@ public class Booking {
     }
 
     public void cancel() {
+        if (this.status != Status.ACTIVE) {
+            throw new IllegalStateException("only active rooms can be cancelled");
+        }
         this.status = Status.CANCELLED;
     }
 
@@ -106,5 +109,9 @@ public class Booking {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public Long getUserId() {
+        return user.getId();
     }
  }

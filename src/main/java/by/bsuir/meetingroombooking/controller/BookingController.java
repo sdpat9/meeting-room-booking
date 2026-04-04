@@ -104,6 +104,12 @@ public class BookingController {
         );
     }
 
+    @GetMapping("/{bookingId}")
+    public BookingResponse getBooking(@PathVariable Long bookingId) {
+        Booking booking = service.getBooking(bookingId);
+        return BookingMapper.toResponse(booking);
+    }
+
     @DeleteMapping("/{bookingId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void cancelBooking(@PathVariable Long bookingId) {

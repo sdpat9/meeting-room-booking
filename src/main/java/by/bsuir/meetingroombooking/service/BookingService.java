@@ -1,9 +1,6 @@
 package by.bsuir.meetingroombooking.service;
 
-import by.bsuir.meetingroombooking.model.Booking;
-import by.bsuir.meetingroombooking.model.Room;
-import by.bsuir.meetingroombooking.model.User;
-import by.bsuir.meetingroombooking.model.Role;
+import by.bsuir.meetingroombooking.model.*;
 import by.bsuir.meetingroombooking.repository.BookingRepository;
 import by.bsuir.meetingroombooking.repository.RoomRepository;
 import by.bsuir.meetingroombooking.repository.UserRepository;
@@ -75,12 +72,14 @@ public class BookingService {
 
         boolean roomConflict = bookingRepository.existsByRoom_IdAndStartBeforeAndEndAfter(
                 roomId,
+                Status.ACTIVE,
                 end,
                 start
         );
 
         boolean userConflict = bookingRepository.existsByUser_IdAndStartBeforeAndEndAfter(
                 userId,
+                Status.ACTIVE,
                 end,
                 start
         );
@@ -156,6 +155,12 @@ public class BookingService {
     public Page<Booking> listBookingsForUser(Long userId, Pageable pageable) {
         getUser(userId);
         return bookingRepository.findAllByUser_Id(userId, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Booking getBooking(Long bookingId) {
+        return bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new NoSuchElementException("booking not found: " + bookingId));
     }
 
     private void requireAdmin(User user) {

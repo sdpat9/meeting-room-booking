@@ -6,6 +6,7 @@ import by.bsuir.meetingroombooking.model.Status;
 public record BookingResponse(
         Long id,
         Long roomId,
+        Long userId,
         LocalDateTime start,
         LocalDateTime end,
         LocalDateTime createdAt,

@@ -1,6 +1,7 @@
 package by.bsuir.meetingroombooking.repository;
 
 import by.bsuir.meetingroombooking.model.Booking;
+import by.bsuir.meetingroombooking.model.Status;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.domain.Page;
@@ -13,12 +14,14 @@ public interface BookingRepository extends JpaRepository<Booking, Long>{
 
     boolean existsByRoom_IdAndStartBeforeAndEndAfter(
             Long roomId,
+            Status status,
             LocalDateTime end,
             LocalDateTime start
     );
 
     boolean existsByUser_IdAndStartBeforeAndEndAfter(
             Long userId,
+            Status staus,
             LocalDateTime end,
             LocalDateTime start
     );

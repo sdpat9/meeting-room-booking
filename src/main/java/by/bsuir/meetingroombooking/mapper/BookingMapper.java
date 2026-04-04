@@ -9,6 +9,7 @@ public class BookingMapper {
         return new BookingResponse(
                 booking.getId(),
                 booking.getRoomId(),
+                booking.getUserId(),
                 booking.getStart(),
                 booking.getEnd(),
                 booking.getCreatedAt(),
