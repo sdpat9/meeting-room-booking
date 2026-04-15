@@ -192,7 +192,7 @@ public class BookingService {
     }
 
     @Transactional(readOnly = true)
-    public List<Room> findAvailableRooms(LocalDateTime start, LocalDateTime end, Integer capacity) {
+    public Page<Room> findAvailableRooms(LocalDateTime start, LocalDateTime end, Integer capacity,Pageable pageable) {
         if (start == null || end == null) {
             throw new IllegalArgumentException("start/end is required");
         }
@@ -205,11 +205,15 @@ public class BookingService {
             throw new IllegalArgumentException("capacity must be at least 1");
         }
 
-        if (capacity == null) {
-            return roomRepository.findAvailableRooms(start, end);
+        if (pageable.getPageSize() > 50) {
+            throw new IllegalArgumentException("page size must not exceed 50");
         }
 
-        return roomRepository.findAvailableRooms(start, end, capacity);
+        if (capacity == null) {
+            return roomRepository.findAvailableRooms(start, end, pageable);
+        }
+
+        return roomRepository.findAvailableRooms(start, end, capacity, pageable);
     }
 
     private void requireAdmin(User user) {
