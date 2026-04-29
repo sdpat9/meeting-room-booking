@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Comparator;
 
 @Service
 public class RoomService {
@@ -86,5 +87,32 @@ public class RoomService {
         }
 
         return roomRepository.findAvailableRooms(start, end, capacity, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Room recommendRoom(LocalDateTime start, LocalDateTime end, int participants) {
+        if (start == null || end == null) {
+            throw new IllegalArgumentException("start/end is required");
+        }
+
+        if (!start.isBefore(end)) {
+            throw new IllegalArgumentException("start must be before end");
+        }
+
+        if (participants < 1) {
+            throw new IllegalArgumentException("participants must be at least 1");
+        }
+
+        Page<Room> availableRooms = roomRepository.findAvailableRooms(
+                start,
+                end,
+                participants,
+                Pageable.unpaged()
+        );
+
+        return availableRooms.getContent()
+                .stream()
+                .min(Comparator.comparingInt(room -> room.getCapacity() - participants))
+                .orElseThrow(() -> new NoSuchElementException("no suitable room found"));
     }
 }

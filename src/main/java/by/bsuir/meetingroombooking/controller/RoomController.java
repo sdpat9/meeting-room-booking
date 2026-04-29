@@ -108,6 +108,16 @@ public class RoomController {
         );
     }
 
+    @GetMapping("/recommend")
+    public RoomResponse recommendRoom(
+            @RequestParam LocalDateTime start,
+            @RequestParam LocalDateTime end,
+            @RequestParam int participants
+    ) {
+        Room room = roomService.recommendRoom(start, end, participants);
+        return RoomMapper.toResponse(room);
+    }
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deactivate(
