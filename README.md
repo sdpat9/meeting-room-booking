@@ -1,51 +1,102 @@
 # Meeting Room Booking System
 
-Backend application for booking meeting rooms built with Java 17, Spring Boot, Spring Data JPA, and PostgreSQL.
+Backend application for booking meeting rooms built with Java, Spring Boot, Spring Data JPA, and PostgreSQL.
 
 ## Description
 
-This project is a REST API for managing meeting rooms, users, and room bookings.
+This project is a REST API for managing meeting rooms, users, and bookings.
 
 The system allows:
 - creating and managing meeting rooms
 - creating and managing users
 - booking rooms for a selected time period
 - preventing booking conflicts
-- searching for available rooms
+- searching and filtering available rooms
 - viewing bookings with pagination
 - validating request data
 - handling errors with structured responses
+- role-based access control (ADMIN / USER)
+- smart room recommendation
 
 ## Technologies
 
-- Java 17
-- Spring Boot 3.5.11
+- Java 17+
+- Spring Boot 3
 - Spring Web
 - Spring Data JPA
 - PostgreSQL
 - Maven
 - Swagger / OpenAPI
 - Docker Compose
+- JUnit 5 + Mockito
 
 ## Main Features
 
 ### Rooms
-- create a room
+- create room (ADMIN only)
+- update room (ADMIN only)
+- deactivate room (ADMIN only)
 - get room by id
 - list all rooms
-- deactivate a room
 - search available rooms by time range
+- filter available rooms by capacity
+- paginate and sort available rooms
+- recommend best available room
 
 ### Users
-- create a user
+- create user (ADMIN only)
+- update user (ADMIN only)
+- deactivate user (ADMIN only)
 - get user by id
 - list all users
-- deactivate a user
+- unique email validation
 
 ### Bookings
 - create booking
-- cancel booking
+- cancel booking (owner or ADMIN)
+- get booking by id
 - list room bookings with pagination
+- list user bookings with pagination
+- prevent room booking conflicts
+- prevent user booking conflicts
+
+## Role Model
+
+The system uses a simple role-based access model.
+
+Roles:
+- ADMIN
+- USER
+
+ADMIN can:
+- manage rooms
+- manage users
+- view and cancel any booking
+
+USER can:
+- create bookings
+- view own bookings
+- cancel own bookings
+- search available rooms
+
+Note: authentication is not implemented yet. Actor is passed via request parameters (adminId, actorId).
+
+## Smart Room Recommendation
+
+The system can recommend the best available room.
+
+Endpoint:
+GET /api/rooms/recommend
+
+Parameters:
+- start
+- end
+- participants
+
+Logic:
+- finds available rooms
+- filters by capacity
+- returns the smallest suitable room
 
 ## Business Rules
 
@@ -60,8 +111,7 @@ The system allows:
 
 ## API Documentation
 
-Swagger UI is available at:
-
+Swagger UI:
 http://localhost:8080/swagger-ui/index.html
 
 ## Running the Project
@@ -89,48 +139,62 @@ mvn clean install
 
 ### Rooms
 - GET /api/rooms  
-- POST /api/rooms  
+- POST /api/rooms?adminId=1  
 - GET /api/rooms/{id}  
-- DELETE /api/rooms/{id}  
-- GET /api/rooms/available?start=2026-03-30T10:00:00&end=2026-03-30T11:00:00  
+- PUT /api/rooms/{id}?adminId=1  
+- DELETE /api/rooms/{id}?adminId=1  
+- GET /api/rooms/available?start=...&end=...  
+- GET /api/rooms/recommend?start=...&end=...&participants=...  
 
 ### Users
 - GET /api/users  
-- POST /api/users  
+- POST /api/users?adminId=1  
 - GET /api/users/{id}  
-- DELETE /api/users/{id}  
+- PUT /api/users/{id}?adminId=1  
+- DELETE /api/users/{id}?adminId=1  
 
 ### Bookings
 - POST /api/bookings  
-- GET /api/bookings/room/{roomId}?page=0&size=10&sortBy=start&direction=asc  
-- DELETE /api/bookings/{bookingId}  
+- GET /api/bookings/{id}  
+- GET /api/bookings/room/{roomId}  
+- GET /api/bookings/user/{userId}  
+- DELETE /api/bookings/{bookingId}?actorId=1  
 
 ## Request Examples
 
 ### Create Room
 
+```json
 {
   "name": "Conference Room A",
   "capacity": 10,
   "active": true
 }
+```
 
 ### Create User
 
+```json
 {
   "name": "Sergey",
   "email": "sergey@example.com",
-  "active": true
+  "active": true,
+  "role": "USER"
 }
+```
 
 ### Create Booking
 
+```json
 {
   "roomId": 1,
   "userId": 1,
+  "title": "Team meeting",
+  "participantsCount": 5,
   "start": "2026-03-30T10:00:00",
   "end": "2026-03-30T11:00:00"
 }
+```
 
 ## Project Structure
 
@@ -143,12 +207,20 @@ src/main/java/by/bsuir/meetingroombooking
 ├── repository  
 └── service  
 
+## Tests
+
+Run tests:
+
+mvn test
+
 ## Future Improvements
 
-- get bookings by user  
-- authentication and authorization  
-- Flyway database migrations  
-- frontend client  
+- authentication and authorization (Spring Security + JWT)
+- Flyway database migrations
+- logging
+- Docker image for backend
+- frontend client
+- caching
 
 ## Author
 
