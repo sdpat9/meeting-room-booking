@@ -78,6 +78,7 @@ public class BookingController {
     @GetMapping("/user/{userId}")
     public PagedResponse<BookingResponse> listBookingsForUser(
             @PathVariable Long userId,
+            @RequestParam Long actorId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "start") String sortBy,
@@ -93,7 +94,7 @@ public class BookingController {
 
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        Page<Booking> bookingPage = service.listBookingsForUser(userId, pageable);
+        Page<Booking> bookingPage = service.listBookingsForUser(userId, actorId, pageable);
 
         return new PagedResponse<>(
                 bookingPage.getContent().stream()
@@ -114,7 +115,9 @@ public class BookingController {
 
     @DeleteMapping("/{bookingId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void cancelBooking(@PathVariable Long bookingId) {
-        service.cancelBooking(bookingId);
+    public void cancelBooking(
+            @PathVariable Long bookingId,
+            @RequestParam Long actorId) {
+        service.cancelBooking(bookingId, actorId);
     }
 }

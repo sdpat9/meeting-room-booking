@@ -38,12 +38,15 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserResponse createUser(@Valid @RequestBody CreateUserRequest req) {
+    public UserResponse createUser(
+            @RequestParam Long adminId,
+            @Valid @RequestBody CreateUserRequest req) {
         User user = bookingService.createUser(
                 req.name(),
                 req.email(),
                 req.active(),
-                req.role()
+                req.role(),
+                adminId
         );
         return UserMapper.toResponse(user);
     }

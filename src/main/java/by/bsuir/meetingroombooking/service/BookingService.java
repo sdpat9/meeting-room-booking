@@ -28,10 +28,12 @@ public class BookingService {
     }
 
     @Transactional
-    public Room createRoom(String name, int capacity, boolean active) {
+    public Room createRoom(String name, int capacity, boolean active, Long adminId) {
+        User admin = getUser(adminId);
+        requireAdmin(admin);
+
         Room room = new Room(name, capacity, active);
-        roomRepository.save(room);
-        return room;
+        return roomRepository.save(room);
     }
 
     @Transactional(readOnly = true)
@@ -74,14 +76,6 @@ public class BookingService {
             throw new IllegalStateException("booking cannot exceed 8 hours");
         }
 
-        Booking newBooking = new Booking(
-                room,
-                user,
-                title,
-                participantsCount,
-                start,
-                end);
-
         boolean roomConflict = bookingRepository.existsByRoom_IdAndStatusAndStartBeforeAndEndAfter(
                 roomId,
                 Status.ACTIVE,
@@ -104,14 +98,31 @@ public class BookingService {
             throw new IllegalStateException("booking conflict for room " + roomId);
         }
 
-        bookingRepository.save(newBooking);
-        return newBooking;
+        Booking newBooking = new Booking(
+                room,
+                user,
+                title,
+                participantsCount,
+                start,
+                end);
+
+        return bookingRepository.save(newBooking);
     }
 
     @Transactional
-    public void cancelBooking(Long bookingId) {
+    public void cancelBooking(Long bookingId, Long actorId) {
+        User actor = getUser(actorId);
+
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NoSuchElementException("booking not found: " + bookingId));
+
+        boolean isAdmin = actor.getRole() == Role.ADMIN;
+        boolean isOwner = booking.getUserId().equals(actorId);
+
+        if (!isAdmin && !isOwner) {
+            throw new IllegalStateException("you cannot cancel this booking");
+        }
+
         booking.cancel();
     }
 
@@ -130,7 +141,10 @@ public class BookingService {
     }
 
     @Transactional
-    public User createUser(String name, String email, boolean active, Role role) {
+    public User createUser(String name, String email, boolean active, Role role, Long adminId) {
+        User admin = getUser(adminId);
+        requireAdmin(admin);
+
         if (userRepository.existsByEmail(email)) {
             throw new IllegalStateException("email is already in use: " + email);
         }
@@ -155,8 +169,17 @@ public class BookingService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Booking> listBookingsForUser(Long userId, Pageable pageable) {
+    public Page<Booking> listBookingsForUser(Long userId, Long actorId, Pageable pageable) {
+        User actor = getUser(actorId);
         getUser(userId);
+
+        boolean isAdmin = actor.getRole() == Role.ADMIN;
+        boolean isOwner = userId.equals(actorId);
+
+        if (!isAdmin && !isOwner) {
+            throw new IllegalStateException("you cannot view these bookings");
+        }
+
         return bookingRepository.findAllByUser_Id(userId, pageable);
     }
 

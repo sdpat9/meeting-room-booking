@@ -40,8 +40,15 @@ public class RoomController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public RoomResponse createRoom(@Valid @RequestBody CreateRoomRequest req) {
-        Room room = bookingService.createRoom(req.name(),req.capacity(), req.active());
+    public RoomResponse createRoom(
+            @RequestParam Long adminId,
+            @Valid @RequestBody CreateRoomRequest req) {
+        Room room = bookingService.createRoom(
+                req.name(),
+                req.capacity(),
+                req.active(),
+                adminId
+        );
         return RoomMapper.toResponse(room);
     }
 
