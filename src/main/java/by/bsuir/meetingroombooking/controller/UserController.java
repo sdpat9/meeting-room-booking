@@ -6,6 +6,7 @@ import by.bsuir.meetingroombooking.dto.UserResponse;
 import by.bsuir.meetingroombooking.mapper.UserMapper;
 import by.bsuir.meetingroombooking.model.User;
 import by.bsuir.meetingroombooking.service.BookingService;
+import by.bsuir.meetingroombooking.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -16,15 +17,15 @@ import java.util.List;
 @RequestMapping("/api/users")
 public class UserController {
 
-    private final BookingService bookingService;
+    private final UserService userService;
 
-    public UserController(BookingService bookingService) {
-        this.bookingService = bookingService;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping
     public List<UserResponse> listUsers() {
-        return bookingService.listUsers()
+        return userService.listUsers()
                 .stream()
                 .map(UserMapper::toResponse)
                 .toList();
@@ -32,7 +33,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public UserResponse getUser(@PathVariable Long id) {
-        User user = bookingService.getUser(id);
+        User user = userService.getUser(id);
         return UserMapper.toResponse(user);
     }
 
@@ -41,7 +42,7 @@ public class UserController {
     public UserResponse createUser(
             @RequestParam Long adminId,
             @Valid @RequestBody CreateUserRequest req) {
-        User user = bookingService.createUser(
+        User user = userService.createUser(
                 req.name(),
                 req.email(),
                 req.active(),
@@ -57,7 +58,7 @@ public class UserController {
             @RequestParam Long adminId,
             @Valid @RequestBody UpdateUserRequest req
             ) {
-        User user = bookingService.updateUser(
+        User user = userService.updateUser(
                 id,
                 req.name(),
                 req.email(),
@@ -73,6 +74,6 @@ public class UserController {
     public void deactivateUser(
             @PathVariable Long id,
             @RequestParam Long adminId) {
-        bookingService.deactivateUser(id, adminId);
+        userService.deactivateUser(id, adminId);
     }
 }

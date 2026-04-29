@@ -49,6 +49,7 @@ public class User {
         if (email == null || email.isBlank()) {
             throw new IllegalArgumentException("email is required");
         }
+        this.email = email;
     }
 
     public void changeRole(Role role) {

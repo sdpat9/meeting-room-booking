@@ -9,6 +9,7 @@ import by.bsuir.meetingroombooking.service.BookingService;
 import by.bsuir.meetingroombooking.dto.CreateRoomRequest;
 
 import by.bsuir.meetingroombooking.dto.PagedResponse;
+import by.bsuir.meetingroombooking.service.RoomService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
@@ -24,15 +25,15 @@ import java.util.List;
 @RequestMapping("/api/rooms")
 public class RoomController {
 
-    private final BookingService bookingService;
+    private final RoomService roomService;
 
-    public RoomController(BookingService bookingService) {
-        this.bookingService = bookingService;
+    public RoomController(RoomService roomService) {
+        this.roomService = roomService;
     }
 
     @GetMapping
     public List<RoomResponse> listRooms() {
-        return bookingService.listRooms()
+        return roomService.listRooms()
                 .stream()
                 .map(RoomMapper::toResponse)
                 .toList();
@@ -43,7 +44,7 @@ public class RoomController {
     public RoomResponse createRoom(
             @RequestParam Long adminId,
             @Valid @RequestBody CreateRoomRequest req) {
-        Room room = bookingService.createRoom(
+        Room room = roomService.createRoom(
                 req.name(),
                 req.capacity(),
                 req.active(),
@@ -54,7 +55,7 @@ public class RoomController {
 
     @GetMapping("/{id}")
     public RoomResponse getRoom(@PathVariable Long id) {
-        Room room = bookingService.getRoom(id);
+        Room room = roomService.getRoom(id);
         return RoomMapper.toResponse(room);
     }
 
@@ -64,7 +65,7 @@ public class RoomController {
             @RequestParam Long adminId,
             @Valid @RequestBody UpdateRoomRequest req
             ) {
-        Room room = bookingService.updateRoom(
+        Room room = roomService.updateRoom(
                 id,
                 req.name(),
                 req.capacity(),
@@ -94,7 +95,7 @@ public class RoomController {
 
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        Page<Room> roomPage = bookingService.findAvailableRooms(start, end, capacity, pageable);
+        Page<Room> roomPage = roomService.findAvailableRooms(start, end, capacity, pageable);
 
         return new PagedResponse<>(
                 roomPage.getContent().stream()
@@ -113,6 +114,6 @@ public class RoomController {
             @PathVariable Long id,
             @RequestParam Long adminId
     ) {
-        bookingService.deactivateRoom(id, adminId);
+        roomService.deactivateRoom(id, adminId);
     }
 }
