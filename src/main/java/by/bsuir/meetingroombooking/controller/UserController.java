@@ -41,6 +41,7 @@ public class UserController {
         return UserMapper.toResponse(user);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UserResponse createUser(
@@ -57,6 +58,7 @@ public class UserController {
         return UserMapper.toResponse(user);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public UserResponse updateUser(
             @PathVariable Long id,
@@ -74,6 +76,7 @@ public class UserController {
         return UserMapper.toResponse(user);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deactivateUser(

@@ -4,8 +4,6 @@ import by.bsuir.meetingroombooking.dto.RoomResponse;
 import by.bsuir.meetingroombooking.dto.UpdateRoomRequest;
 import by.bsuir.meetingroombooking.mapper.RoomMapper;
 import by.bsuir.meetingroombooking.model.Room;
-import by.bsuir.meetingroombooking.repository.RoomRepository;
-import by.bsuir.meetingroombooking.service.BookingService;
 import by.bsuir.meetingroombooking.dto.CreateRoomRequest;
 import by.bsuir.meetingroombooking.dto.PagedResponse;
 import by.bsuir.meetingroombooking.service.RoomService;
@@ -18,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import jakarta.validation.Valid;
 
 import java.time.LocalDateTime;
@@ -41,6 +40,7 @@ public class RoomController {
                 .toList();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public RoomResponse createRoom(
@@ -61,6 +61,7 @@ public class RoomController {
         return RoomMapper.toResponse(room);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public RoomResponse updateRoom(
             @PathVariable Long id,
@@ -120,6 +121,7 @@ public class RoomController {
         return RoomMapper.toResponse(room);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deactivate(
