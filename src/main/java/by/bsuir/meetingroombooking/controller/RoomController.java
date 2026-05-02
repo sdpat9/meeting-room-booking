@@ -7,9 +7,11 @@ import by.bsuir.meetingroombooking.model.Room;
 import by.bsuir.meetingroombooking.repository.RoomRepository;
 import by.bsuir.meetingroombooking.service.BookingService;
 import by.bsuir.meetingroombooking.dto.CreateRoomRequest;
-
 import by.bsuir.meetingroombooking.dto.PagedResponse;
 import by.bsuir.meetingroombooking.service.RoomService;
+import by.bsuir.meetingroombooking.security.CustomUserDetails;
+
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
@@ -42,13 +44,13 @@ public class RoomController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public RoomResponse createRoom(
-            @RequestParam Long adminId,
+            @AuthenticationPrincipal CustomUserDetails currentUser,
             @Valid @RequestBody CreateRoomRequest req) {
         Room room = roomService.createRoom(
                 req.name(),
                 req.capacity(),
                 req.active(),
-                adminId
+                currentUser.getId()
         );
         return RoomMapper.toResponse(room);
     }
@@ -62,7 +64,7 @@ public class RoomController {
     @PutMapping("/{id}")
     public RoomResponse updateRoom(
             @PathVariable Long id,
-            @RequestParam Long adminId,
+            @AuthenticationPrincipal CustomUserDetails currentUser,
             @Valid @RequestBody UpdateRoomRequest req
             ) {
         Room room = roomService.updateRoom(
@@ -70,7 +72,7 @@ public class RoomController {
                 req.name(),
                 req.capacity(),
                 req.active(),
-                adminId
+                currentUser.getId()
         );
         return RoomMapper.toResponse(room);
     }
@@ -122,8 +124,8 @@ public class RoomController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deactivate(
             @PathVariable Long id,
-            @RequestParam Long adminId
+            @AuthenticationPrincipal CustomUserDetails currentUser
     ) {
-        roomService.deactivateRoom(id, adminId);
+        roomService.deactivateRoom(id, currentUser.getId());
     }
 }
