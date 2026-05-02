@@ -2,11 +2,11 @@ package by.bsuir.meetingroombooking.controller;
 
 import by.bsuir.meetingroombooking.dto.BookingResponse;
 import by.bsuir.meetingroombooking.dto.PagedResponse;
-import by.bsuir.meetingroombooking.dto.RoomResponse;
 import by.bsuir.meetingroombooking.mapper.BookingMapper;
 import by.bsuir.meetingroombooking.model.Booking;
 import by.bsuir.meetingroombooking.service.BookingService;
 import by.bsuir.meetingroombooking.dto.CreateBookingRequest;
+import by.bsuir.meetingroombooking.security.CustomUserDetails;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -15,10 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import jakarta.validation.Valid;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/bookings")
@@ -78,7 +76,7 @@ public class BookingController {
     @GetMapping("/user/{userId}")
     public PagedResponse<BookingResponse> listBookingsForUser(
             @PathVariable Long userId,
-            @RequestParam Long actorId,
+            @AuthenticationPrincipal CustomUserDetails currentUser,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "start") String sortBy,
@@ -94,7 +92,11 @@ public class BookingController {
 
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        Page<Booking> bookingPage = service.listBookingsForUser(userId, actorId, pageable);
+        Page<Booking> bookingPage = service.listBookingsForUser(
+                userId,
+                currentUser.getId(),
+                pageable
+        );
 
         return new PagedResponse<>(
                 bookingPage.getContent().stream()
@@ -108,8 +110,10 @@ public class BookingController {
     }
 
     @GetMapping("/{bookingId}")
-    public BookingResponse getBooking(@PathVariable Long bookingId) {
-        Booking booking = service.getBooking(bookingId);
+    public BookingResponse getBooking(
+            @PathVariable Long bookingId,
+            @AuthenticationPrincipal CustomUserDetails currentUser) {
+        Booking booking = service.getBooking(bookingId, currentUser.getId());
         return BookingMapper.toResponse(booking);
     }
 
@@ -117,7 +121,7 @@ public class BookingController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void cancelBooking(
             @PathVariable Long bookingId,
-            @RequestParam Long actorId) {
-        service.cancelBooking(bookingId, actorId);
+            @AuthenticationPrincipal CustomUserDetails currentUser) {
+        service.cancelBooking(bookingId, currentUser.getId());
     }
 }

@@ -113,4 +113,11 @@ public class BookingService {
 
         return bookingRepository.findAllByUser_Id(userId, pageable);
     }
+
+    @Transactional(readOnly = true)
+    public Booking getBooking(Long bookingId, Long actorId) {
+        Booking booking = getBooking(bookingId);
+        accessService.requireOwnerOrAdmin(actorId, booking.getUserId());
+        return booking;
+    }
 }
