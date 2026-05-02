@@ -3,6 +3,7 @@ package by.bsuir.meetingroombooking.service;
 import by.bsuir.meetingroombooking.model.Role;
 import by.bsuir.meetingroombooking.model.User;
 import by.bsuir.meetingroombooking.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,10 +15,14 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final AccessService accessService;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, AccessService accessService) {
+    public UserService(UserRepository userRepository,
+                       AccessService accessService,
+                       PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.accessService = accessService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional(readOnly = true)
@@ -39,7 +44,9 @@ public class UserService {
             throw new IllegalStateException("email is already in use: " + email);
         }
 
-        User user = new User(name, email, password, active, role);
+        String encodedPassword = passwordEncoder.encode(password);
+
+        User user = new User(name, email, encodedPassword, active, role);
         return userRepository.save(user);
     }
 

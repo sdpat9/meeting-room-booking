@@ -5,6 +5,7 @@ import by.bsuir.meetingroombooking.model.User;
 import by.bsuir.meetingroombooking.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Optional;
@@ -17,13 +18,15 @@ class UserServiceTest {
     private UserRepository userRepository;
     private AccessService accessService;
     private UserService userService;
+    private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     void setUp() {
         userRepository = mock(UserRepository.class);
         accessService = mock(AccessService.class);
+        passwordEncoder = mock(PasswordEncoder.class);
 
-        userService = new UserService(userRepository, accessService);
+        userService = new UserService(userRepository, accessService, passwordEncoder);
     }
 
     @Test
@@ -35,6 +38,7 @@ class UserServiceTest {
                 userService.createUser(
                         "Sergey",
                         "sergey@example.com",
+                        "password123",
                         true,
                         Role.USER,
                         1L
@@ -47,16 +51,19 @@ class UserServiceTest {
 
     @Test
     void createUser_admin_success() {
-        User user = new User("Sergey", "sergey@example.com", true, Role.USER);
+        User user = new User("Sergey", "sergey@example.com", "encodedPassword",true, Role.USER);
 
         when(userRepository.existsByEmail("sergey@example.com"))
                 .thenReturn(false);
         when(userRepository.save(any(User.class)))
                 .thenReturn(user);
 
+        when(passwordEncoder.encode("password123")).thenReturn("encodedPassword");
+
         User result = userService.createUser(
                 "Sergey",
                 "sergey@example.com",
+                "password123",
                 true,
                 Role.USER,
                 1L
@@ -64,9 +71,11 @@ class UserServiceTest {
 
         assertEquals("Sergey", result.getName());
         assertEquals("sergey@example.com", result.getEmail());
+        assertEquals("encodedPassword", result.getPassword());
         assertEquals(Role.USER, result.getRole());
 
         verify(accessService).requireAdmin(1L);
+        verify(passwordEncoder).encode("password123");
         verify(userRepository).save(any(User.class));
     }
 
@@ -92,7 +101,7 @@ class UserServiceTest {
 
     @Test
     void updateUser_duplicateEmail_throwsException() {
-        User user = new User("Sergey", "sergey@example.com", true, Role.USER);
+        User user = new User("Sergey", "sergey@example.com", "encodedPassword",true, Role.USER);
         ReflectionTestUtils.setField(user, "id", 1L);
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -115,7 +124,7 @@ class UserServiceTest {
 
     @Test
     void updateUser_admin_success() {
-        User user = new User("Sergey", "sergey@example.com", true, Role.USER);
+        User user = new User("Sergey", "sergey@example.com", "encodedPassword",true, Role.USER);
         ReflectionTestUtils.setField(user, "id", 1L);
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
