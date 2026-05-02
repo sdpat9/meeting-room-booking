@@ -5,11 +5,13 @@ import by.bsuir.meetingroombooking.dto.UpdateUserRequest;
 import by.bsuir.meetingroombooking.dto.UserResponse;
 import by.bsuir.meetingroombooking.mapper.UserMapper;
 import by.bsuir.meetingroombooking.model.User;
-import by.bsuir.meetingroombooking.service.BookingService;
+import by.bsuir.meetingroombooking.security.CustomUserDetails;
 import by.bsuir.meetingroombooking.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 
@@ -23,6 +25,7 @@ public class UserController {
         this.userService = userService;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public List<UserResponse> listUsers() {
         return userService.listUsers()
@@ -31,6 +34,7 @@ public class UserController {
                 .toList();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public UserResponse getUser(@PathVariable Long id) {
         User user = userService.getUser(id);
@@ -40,7 +44,7 @@ public class UserController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UserResponse createUser(
-            @RequestParam Long adminId,
+            @AuthenticationPrincipal CustomUserDetails currentUser,
             @Valid @RequestBody CreateUserRequest req) {
         User user = userService.createUser(
                 req.name(),
@@ -48,7 +52,7 @@ public class UserController {
                 req.password(),
                 req.active(),
                 req.role(),
-                adminId
+                currentUser.getId()
         );
         return UserMapper.toResponse(user);
     }
@@ -56,7 +60,7 @@ public class UserController {
     @PutMapping("/{id}")
     public UserResponse updateUser(
             @PathVariable Long id,
-            @RequestParam Long adminId,
+            @AuthenticationPrincipal CustomUserDetails currentUser,
             @Valid @RequestBody UpdateUserRequest req
             ) {
         User user = userService.updateUser(
@@ -65,7 +69,7 @@ public class UserController {
                 req.email(),
                 req.active(),
                 req.role(),
-                adminId
+                currentUser.getId()
         );
         return UserMapper.toResponse(user);
     }
@@ -74,7 +78,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deactivateUser(
             @PathVariable Long id,
-            @RequestParam Long adminId) {
-        userService.deactivateUser(id, adminId);
+            @AuthenticationPrincipal CustomUserDetails currentUser) {
+        userService.deactivateUser(id, currentUser.getId());
     }
 }
