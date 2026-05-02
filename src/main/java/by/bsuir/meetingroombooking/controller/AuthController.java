@@ -1,5 +1,6 @@
 package by.bsuir.meetingroombooking.controller;
 
+import by.bsuir.meetingroombooking.dto.LoginRequest;
 import by.bsuir.meetingroombooking.dto.RegisterRequest;
 import by.bsuir.meetingroombooking.dto.UserResponse;
 import by.bsuir.meetingroombooking.mapper.UserMapper;
@@ -24,6 +25,16 @@ public class AuthController {
     public UserResponse register(@Valid @RequestBody RegisterRequest req) {
         User user = authService.register(
                 req.name(),
+                req.email(),
+                req.password()
+        );
+
+        return UserMapper.toResponse(user);
+    }
+
+    @PostMapping("/login")
+    public UserResponse login(@Valid @RequestBody LoginRequest req) {
+        User user = authService.login(
                 req.email(),
                 req.password()
         );

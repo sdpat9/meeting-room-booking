@@ -7,6 +7,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.NoSuchElementException;
+
 @Service
 public class AuthService {
 
@@ -28,5 +30,21 @@ public class AuthService {
 
         User user = new User(name, email, encodedPassword, true, Role.USER);
         return userRepository.save(user);
+    }
+
+    @Transactional(readOnly = true)
+    public User login(String email, String password) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new NoSuchElementException("invalid email or password"));
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new IllegalStateException("invalid email or password");
+        }
+
+        if (!user.isActive()) {
+            throw new IllegalStateException("user is inactive");
+        }
+
+        return user;
     }
 }
