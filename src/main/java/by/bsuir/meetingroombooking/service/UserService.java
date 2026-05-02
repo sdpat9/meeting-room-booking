@@ -32,14 +32,14 @@ public class UserService {
     }
 
     @Transactional
-    public User createUser(String name, String email, boolean active, Role role, Long adminId) {
+    public User createUser(String name, String email, String password, boolean active, Role role, Long adminId) {
         accessService.requireAdmin(adminId);
 
         if (userRepository.existsByEmail(email)) {
             throw new IllegalStateException("email is already in use: " + email);
         }
 
-        User user = new User(name, email, active, role);
+        User user = new User(name, email, password, active, role);
         return userRepository.save(user);
     }
 

@@ -45,6 +45,7 @@ public class UserController {
         User user = userService.createUser(
                 req.name(),
                 req.email(),
+                req.password(),
                 req.active(),
                 req.role(),
                 adminId

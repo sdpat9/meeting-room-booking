@@ -13,6 +13,9 @@ public record CreateUserRequest(
         @Email(message = "Email must be valid")
         String email,
 
+        @NotBlank(message = "Password must not be blank")
+        String password,
+
         boolean active,
 
         @NotNull(message = "Role must not be null")

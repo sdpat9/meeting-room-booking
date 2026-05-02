@@ -14,13 +14,16 @@ public class User {
     private String name;
     private boolean active;
 
+    @Column(nullable = false)
+    private String password;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
     protected User(){
     }
 
-    public User(String name, String email, boolean active, Role role) {
+    public User(String name, String email, String password, boolean active, Role role) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("name is required");
         }
@@ -34,6 +37,7 @@ public class User {
 
         this.name = name;
         this.email = email;
+        this.password = password;
         this.active = active;
         this.role = role;
     }
@@ -88,5 +92,9 @@ public class User {
 
     public Role getRole() {
         return role;
+    }
+
+    public String getPassword() {
+        return password;
     }
 }
