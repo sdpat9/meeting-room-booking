@@ -61,10 +61,12 @@ public class BookingController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public BookingResponse createBooking(@Valid @RequestBody CreateBookingRequest req) {
+    public BookingResponse createBooking(
+            @AuthenticationPrincipal CustomUserDetails currentUser,
+            @Valid @RequestBody CreateBookingRequest req) {
         Booking booking = service.createBooking(
                 req.roomId(),
-                req.userId(),
+                currentUser.getId(), 
                 req.title(),
                 req.participantsCount(),
                 req.start(),
