@@ -6,6 +6,7 @@ import by.bsuir.meetingroombooking.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import by.bsuir.meetingroombooking.security.JwtService;
 
 import java.util.NoSuchElementException;
 
@@ -14,10 +15,14 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public AuthService(UserRepository userRepository,
+                       PasswordEncoder passwordEncoder,
+                       JwtService jwtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     @Transactional
@@ -46,5 +51,11 @@ public class AuthService {
         }
 
         return user;
+    }
+
+    @Transactional(readOnly = true)
+    public String loginAndGenerateToken(String email, String password) {
+        User user = login(email, password);
+        return jwtService.generateToken(user);
     }
 }
