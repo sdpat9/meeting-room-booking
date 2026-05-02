@@ -66,7 +66,7 @@ public class BookingController {
             @Valid @RequestBody CreateBookingRequest req) {
         Booking booking = service.createBooking(
                 req.roomId(),
-                currentUser.getId(), 
+                currentUser.getId(),
                 req.title(),
                 req.participantsCount(),
                 req.start(),
