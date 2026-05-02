@@ -1,9 +1,9 @@
 package by.bsuir.meetingroombooking.exception;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.validation.FieldError;
 
 import by.bsuir.meetingroombooking.dto.ErrorResponse;
 import java.time.LocalDateTime;
@@ -14,37 +14,25 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NoSuchElementException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handlerNotFound(NoSuchElementException ex) {
-        return new ErrorResponse(
-                HttpStatus.NOT_FOUND.value(),
-                ex.getMessage(),
-                LocalDateTime.now()
-        );
+    public ErrorResponse handlerNotFound(NoSuchElementException ex, HttpServletRequest request) {
+        return buildErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), request);
     }
 
     @ExceptionHandler(IllegalStateException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handlerConflict(IllegalStateException ex) {
-        return new ErrorResponse(
-                HttpStatus.CONFLICT.value(),
-                ex.getMessage(),
-                LocalDateTime.now()
-        );
+    public ErrorResponse handlerConflict(IllegalStateException ex, HttpServletRequest request) {
+        return buildErrorResponse(HttpStatus.CONFLICT, ex.getMessage(), request);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handlerBadRequest(IllegalArgumentException ex) {
-        return new ErrorResponse(
-                HttpStatus.BAD_REQUEST.value(),
-                ex.getMessage(),
-                LocalDateTime.now()
-        );
+    public ErrorResponse handlerBadRequest(IllegalArgumentException ex, HttpServletRequest request) {
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleValidation(MethodArgumentNotValidException ex) {
+    public ErrorResponse handleValidation(MethodArgumentNotValidException ex, HttpServletRequest request) {
         String message = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
@@ -52,9 +40,19 @@ public class GlobalExceptionHandler {
                 .findFirst()
                 .orElse("Validation error");
 
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, message, request);
+    }
+
+    private ErrorResponse buildErrorResponse(
+            HttpStatus status,
+            String message,
+            HttpServletRequest request
+    ) {
         return new ErrorResponse(
-                HttpStatus.BAD_REQUEST.value(),
+                status.value(),
+                status.name(),
                 message,
+                request.getRequestURI(),
                 LocalDateTime.now()
         );
     }
