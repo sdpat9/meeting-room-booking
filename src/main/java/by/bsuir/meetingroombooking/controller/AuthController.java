@@ -6,6 +6,7 @@ import by.bsuir.meetingroombooking.dto.UserResponse;
 import by.bsuir.meetingroombooking.mapper.UserMapper;
 import by.bsuir.meetingroombooking.model.User;
 import by.bsuir.meetingroombooking.service.AuthService;
+import by.bsuir.meetingroombooking.dto.AuthResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -33,12 +34,12 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public UserResponse login(@Valid @RequestBody LoginRequest req) {
-        User user = authService.login(
+    public AuthResponse login(@Valid @RequestBody LoginRequest req) {
+        String token = authService.loginAndGenerateToken(
                 req.email(),
                 req.password()
         );
 
-        return UserMapper.toResponse(user);
+        return new AuthResponse(token);
     }
 }
