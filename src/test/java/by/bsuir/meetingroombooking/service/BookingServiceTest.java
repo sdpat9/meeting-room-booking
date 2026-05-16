@@ -40,7 +40,7 @@ class BookingServiceTest {
     @Test
     void createBooking_success() {
         Room room = new Room("Room A", 10, true);
-        User user = new User("Sergey", "sergey@example.com", true, Role.USER);
+        User user = new User("Sergey", "sergey@example.com", "encodedPassword", true, Role.USER);
 
         LocalDateTime start = LocalDateTime.now().plusDays(1);
         LocalDateTime end = start.plusHours(1);
@@ -76,7 +76,7 @@ class BookingServiceTest {
     @Test
     void createBooking_roomConflict_throwsException() {
         Room room = new Room("Room A", 10, true);
-        User user = new User("Sergey", "sergey@example.com", true, Role.USER);
+        User user = new User("Sergey", "sergey@example.com", "encodedPassword", true, Role.USER);
 
         LocalDateTime start = LocalDateTime.now().plusDays(1);
         LocalDateTime end = start.plusHours(1);
@@ -107,7 +107,7 @@ class BookingServiceTest {
     @Test
     void createBooking_userConflict_throwsException() {
         Room room = new Room("Room A", 10, true);
-        User user = new User("Sergey", "sergey@example.com", true, Role.USER);
+        User user = new User("Sergey", "sergey@example.com", "encodedPassword",true, Role.USER);
 
         LocalDateTime start = LocalDateTime.now().plusDays(1);
         LocalDateTime end = start.plusHours(1);
@@ -138,7 +138,7 @@ class BookingServiceTest {
     @Test
     void cancelBooking_ownerOrAdmin_success() {
         Room room = new Room("Room A", 10, true);
-        User user = new User("Sergey", "sergey@example.com", true, Role.USER);
+        User user = new User("Sergey", "sergey@example.com", "encodedPassword",true, Role.USER);
         ReflectionTestUtils.setField(user, "id", 2L);
 
         LocalDateTime start = LocalDateTime.now().plusDays(1);
@@ -157,7 +157,7 @@ class BookingServiceTest {
     @Test
     void cancelBooking_notOwnerAndNotAdmin_forbidden() {
         Room room = new Room("Room A", 10, true);
-        User user = new User("Sergey", "sergey@example.com", true, Role.USER);
+        User user = new User("Sergey", "sergey@example.com", "encodedPassword",true, Role.USER);
         ReflectionTestUtils.setField(user, "id", 2L);
 
         LocalDateTime start = LocalDateTime.now().plusDays(1);

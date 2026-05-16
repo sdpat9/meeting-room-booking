@@ -2,30 +2,36 @@ package by.bsuir.meetingroombooking.controller;
 
 import by.bsuir.meetingroombooking.model.Room;
 import by.bsuir.meetingroombooking.service.RoomService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(RoomController.class)
 class RoomControllerTest {
 
-    @Autowired
     private MockMvc mockMvc;
-
-    @MockitoBean
     private RoomService roomService;
+
+    @BeforeEach
+    void setUp() {
+        roomService = mock(RoomService.class);
+        RoomController roomController = new RoomController(roomService);
+
+        mockMvc = MockMvcBuilders
+                .standaloneSetup(roomController)
+                .setCustomArgumentResolvers(new TestAuthenticationPrincipalResolver())
+                .build();
+    }
 
     @Test
     void listRooms_success() throws Exception {
@@ -40,34 +46,8 @@ class RoomControllerTest {
                 .andExpect(jsonPath("$[0].capacity").value(4))
                 .andExpect(jsonPath("$[0].active").value(true))
                 .andExpect(jsonPath("$[1].name").value("Room B"))
-                .andExpect(jsonPath("$[1].capacity").value(8));
-    }
-
-    @Test
-    void createRoom_success() throws Exception {
-        Room room = new Room("Room A", 10, true);
-
-        when(roomService.createRoom(
-                eq("Room A"),
-                eq(10),
-                eq(true),
-                eq(1L)
-        )).thenReturn(room);
-
-        mockMvc.perform(post("/api/rooms")
-                        .param("adminId", "1")
-                        .contentType("application/json")
-                        .content("""
-                                {
-                                  "name": "Room A",
-                                  "capacity": 10,
-                                  "active": true
-                                }
-                                """))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name").value("Room A"))
-                .andExpect(jsonPath("$.capacity").value(10))
-                .andExpect(jsonPath("$.active").value(true));
+                .andExpect(jsonPath("$[1].capacity").value(8))
+                .andExpect(jsonPath("$[1].active").value(true));
     }
 
     @Test
@@ -84,6 +64,34 @@ class RoomControllerTest {
     }
 
     @Test
+    void createRoom_success() throws Exception {
+        Room room = new Room("Room A", 10, true);
+
+        when(roomService.createRoom(
+                eq("Room A"),
+                eq(10),
+                eq(true),
+                eq(1L)
+        )).thenReturn(room);
+
+        mockMvc.perform(post("/api/rooms")
+                        .contentType("application/json")
+                        .content("""
+                                {
+                                  "name": "Room A",
+                                  "capacity": 10,
+                                  "active": true
+                                }
+                                """))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name").value("Room A"))
+                .andExpect(jsonPath("$.capacity").value(10))
+                .andExpect(jsonPath("$.active").value(true));
+
+        verify(roomService).createRoom("Room A", 10, true, 1L);
+    }
+
+    @Test
     void updateRoom_success() throws Exception {
         Room room = new Room("Updated Room", 12, true);
 
@@ -96,7 +104,6 @@ class RoomControllerTest {
         )).thenReturn(room);
 
         mockMvc.perform(put("/api/rooms/1")
-                        .param("adminId", "1")
                         .contentType("application/json")
                         .content("""
                                 {
@@ -109,6 +116,18 @@ class RoomControllerTest {
                 .andExpect(jsonPath("$.name").value("Updated Room"))
                 .andExpect(jsonPath("$.capacity").value(12))
                 .andExpect(jsonPath("$.active").value(true));
+
+        verify(roomService).updateRoom(1L, "Updated Room", 12, true, 1L);
+    }
+
+    @Test
+    void deactivateRoom_success() throws Exception {
+        doNothing().when(roomService).deactivateRoom(1L, 1L);
+
+        mockMvc.perform(delete("/api/rooms/1"))
+                .andExpect(status().isNoContent());
+
+        verify(roomService).deactivateRoom(1L, 1L);
     }
 
     @Test
@@ -162,12 +181,5 @@ class RoomControllerTest {
                 .andExpect(jsonPath("$.name").value("Room B"))
                 .andExpect(jsonPath("$.capacity").value(8))
                 .andExpect(jsonPath("$.active").value(true));
-    }
-
-    @Test
-    void deactivateRoom_success() throws Exception {
-        mockMvc.perform(delete("/api/rooms/1")
-                        .param("adminId", "1"))
-                .andExpect(status().isNoContent());
     }
 }
