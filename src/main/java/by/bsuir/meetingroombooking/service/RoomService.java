@@ -41,8 +41,28 @@ public class RoomService {
     }
 
     @Transactional(readOnly = true)
-    public List<Room> listRooms() {
-        return roomRepository.findAll();
+    public Page<Room> listRooms(
+            Boolean active,
+            String name,
+            Pageable pageable
+    ) {
+        if (active != null && name != null) {
+            return roomRepository.findByActiveAndNameContainingIgnoreCase(
+                    active,
+                    name,
+                    pageable
+            );
+        }
+
+        if (active != null) {
+            return roomRepository.findByActive(active, pageable);
+        }
+
+        if (name != null) {
+            return roomRepository.findByNameContainingIgnoreCase(name, pageable);
+        }
+
+        return roomRepository.findAll(pageable);
     }
 
     @Transactional

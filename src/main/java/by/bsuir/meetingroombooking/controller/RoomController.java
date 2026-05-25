@@ -33,11 +33,39 @@ public class RoomController {
     }
 
     @GetMapping
-    public List<RoomResponse> listRooms() {
-        return roomService.listRooms()
-                .stream()
-                .map(RoomMapper::toResponse)
-                .toList();
+    public PagedResponse<RoomResponse> listRooms(
+            @RequestParam(required = false) Boolean active,
+            @RequestParam(required = false) String name,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
+    ) {
+        if (size > 50) {
+            throw new IllegalArgumentException("page size must not exceed 50");
+        }
+
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<Room> roomPage = roomService.listRooms(
+                active,
+                name,
+                pageable
+        );
+
+        return new PagedResponse<>(
+                roomPage.getContent().stream()
+                        .map(RoomMapper::toResponse)
+                        .toList(),
+                roomPage.getNumber(),
+                roomPage.getSize(),
+                roomPage.getTotalElements(),
+                roomPage.getTotalPages()
+        );
     }
 
     @PreAuthorize("hasRole('ADMIN')")

@@ -42,4 +42,17 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
               )
             """)
     Page<Room> findAvailableRooms(LocalDateTime start, LocalDateTime end, Integer capacity, Pageable pageable);
+
+    Page<Room> findByActive(boolean active, Pageable pageable);
+
+    Page<Room> findByNameContainingIgnoreCase(
+            String name,
+            Pageable pageable
+    );
+
+    Page<Room> findByActiveAndNameContainingIgnoreCase(
+            boolean active,
+            String name,
+            Pageable pageable
+    );
 }

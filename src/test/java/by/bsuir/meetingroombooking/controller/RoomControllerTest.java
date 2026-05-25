@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -35,19 +36,31 @@ class RoomControllerTest {
 
     @Test
     void listRooms_success() throws Exception {
-        when(roomService.listRooms()).thenReturn(List.of(
-                new Room("Room A", 4, true),
-                new Room("Room B", 8, true)
+        Room roomA = new Room("Room A", 4, true);
+        Room roomB = new Room("Room B", 8, true);
+
+        when(roomService.listRooms(
+                isNull(),
+                isNull(),
+                any(Pageable.class)
+        )).thenReturn(new PageImpl<>(
+                List.of(roomA, roomB),
+                PageRequest.of(0, 10),
+                2
         ));
 
         mockMvc.perform(get("/api/rooms"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name").value("Room A"))
-                .andExpect(jsonPath("$[0].capacity").value(4))
-                .andExpect(jsonPath("$[0].active").value(true))
-                .andExpect(jsonPath("$[1].name").value("Room B"))
-                .andExpect(jsonPath("$[1].capacity").value(8))
-                .andExpect(jsonPath("$[1].active").value(true));
+                .andExpect(jsonPath("$.content[0].name").value("Room A"))
+                .andExpect(jsonPath("$.content[0].capacity").value(4))
+                .andExpect(jsonPath("$.content[0].active").value(true))
+                .andExpect(jsonPath("$.content[1].name").value("Room B"))
+                .andExpect(jsonPath("$.content[1].capacity").value(8))
+                .andExpect(jsonPath("$.content[1].active").value(true))
+                .andExpect(jsonPath("$.page").value(0))
+                .andExpect(jsonPath("$.size").value(10))
+                .andExpect(jsonPath("$.totalElements").value(2))
+                .andExpect(jsonPath("$.totalPages").value(1));
     }
 
     @Test
