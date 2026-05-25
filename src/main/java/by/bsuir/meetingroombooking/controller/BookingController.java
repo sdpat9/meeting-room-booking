@@ -17,9 +17,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @RestController
 @RequestMapping("/api/bookings")
+@SecurityRequirement(name = "bearerAuth")
 public class BookingController {
     private final BookingService service;
 
