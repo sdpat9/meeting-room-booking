@@ -1,6 +1,9 @@
 package by.bsuir.meetingroombooking.model;
 
 import jakarta.persistence.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.time.Duration;
@@ -12,6 +15,7 @@ import java.time.Duration;
                 @Index(name = "idx_booking_room_time", columnList = "room_id, start_time, end_time")
         }
 )
+@EntityListeners(AuditingEntityListener.class)
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,8 +38,13 @@ public class Booking {
     private String title;
     private int participantsCount;
 
+    @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
 
     @Enumerated(EnumType.STRING)
     private Status status;
@@ -81,7 +90,6 @@ public class Booking {
         this.participantsCount = participantsCount;
         this.start = start;
         this.end = end;
-        this.createdAt = LocalDateTime.now();
         this.status = Status.ACTIVE;
     }
 
@@ -106,6 +114,10 @@ public class Booking {
 
     public Long getRoomId() {
         return room.getId();
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
     public String getTitle() {
